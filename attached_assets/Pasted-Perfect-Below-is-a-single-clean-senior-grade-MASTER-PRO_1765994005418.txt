@@ -1,0 +1,208 @@
+Perfect. Below is a **single, clean, senior-grade MASTER PROMPT** that asks the AI to produce **both**:
+
+1. a **Product Requirements Document (PRD)**
+2. a **Database Schema (Supabase-ready)**
+
+This is written so **any serious AI / dev tool** will give you structured, usable output — not vague text.
+
+---
+
+# 🔥 MASTER PROMPT: PRD + DATABASE SCHEMA (COPY–PASTE)
+
+---
+
+## ROLE
+
+Act as a **Senior Product Manager + Senior Backend Architect** who has built large-scale civic tech, NGO, and public-facing platforms.
+
+You think in **real-world systems**, scalability, data integrity, and user trust.
+
+---
+
+## PROJECT
+
+### **Global Pledge Initiative**
+
+A public platform for **UN SDG & Custom Goal pledges**, official certificates, public verification, and viral sharing.
+
+The product must feel:
+
+* Official
+* Trustworthy
+* Fast
+* Shareable
+* Scalable to millions of users
+
+---
+
+## DELIVERABLES (MANDATORY)
+
+You must generate **both** of the following in one response:
+
+### 1️⃣ A COMPLETE PRODUCT REQUIREMENTS DOCUMENT (PRD)
+
+### 2️⃣ A COMPLETE DATABASE SCHEMA (Supabase / PostgreSQL compatible)
+
+Use **clear headings, tables, and structured sections**.
+
+---
+
+## 🧩 PRODUCT OVERVIEW (CONTEXT)
+
+Users can:
+
+* Select a **UN SDG or Custom Goal**
+* Enter **full personal data**
+* Upload a photo
+* Generate an **official pledge certificate**
+* Share pledges publicly
+* View pledges on public pages, maps, and registries
+
+Certificates must be generated **only from retrieved database records**, never from local form state.
+
+---
+
+## 🧠 CORE FEATURES TO INCLUDE (ALL REQUIRED)
+
+### Pledge Flow
+
+* Full Name
+* Email
+* Mobile number
+* Location (City, Country)
+* Optional photo
+* Optional short pledge story
+
+### Goals
+
+* UN SDGs (official colors)
+* Custom goals
+* Community-suggested goals (user submissions)
+
+### Certificates
+
+* Unique Pledge ID
+* QR code verification
+* Downloadable PNG
+* Multiple formats (square, story, landscape)
+
+### Social & Growth
+
+* Public pledge pages
+* Social sharing (WhatsApp, Instagram, LinkedIn, X)
+* Trending goals
+* Live counters
+* World map of pledges
+* Embed widget
+
+### Trust & Credibility
+
+* Verification badge
+* Public pledge registry
+* Search & filters
+
+### Engagement
+
+* Badges & achievements
+* Team / group pledges
+* Pledge renewals & reminders
+* Feedback after pledge
+
+### Accessibility & Scale
+
+* Multi-language ready
+* Accessibility-first
+* NGO / CSR partner pledge pages
+
+🚫 Do NOT include AI video generation
+🚫 Do NOT include “minimal data” pledges (full data always required)
+
+---
+
+## 📄 PART 1: PRD REQUIREMENTS
+
+The PRD **must include**:
+
+1. Product Summary
+2. Problem Statement
+3. Goals & Success Metrics
+4. User Personas
+5. User Journeys (step-by-step flows)
+6. Feature Breakdown (with priority & rationale)
+7. Functional Requirements
+8. Non-Functional Requirements (performance, security, privacy)
+9. Trust & Verification Model
+10. Accessibility & Localization Strategy
+11. Analytics & Metrics
+12. Risks & Mitigations
+13. Future Scalability Considerations
+
+Write it as if it will be reviewed by:
+
+* Developers
+* Designers
+* NGO partners
+* CSR stakeholders
+
+---
+
+## 🗄️ PART 2: DATABASE SCHEMA REQUIREMENTS
+
+Design a **Supabase / PostgreSQL schema** that supports **all features above**.
+
+### Schema must include tables for (minimum):
+
+* users / pledgers
+* pledges
+* goals
+* community_suggested_goals
+* certificates
+* pledge_badges
+* teams / organizations
+* team_members
+* pledge_shares
+* pledge_feedback
+* pledge_reminders
+* verification_logs
+
+For **each table**, clearly specify:
+
+* Table name
+* Column name
+* Data type
+* Primary key
+* Foreign keys
+* Indexes (where required)
+* Nullable vs non-nullable
+* Purpose of the table
+
+Also include:
+
+* Relationship explanations
+* Example rows for key tables
+* Notes on scaling (millions of rows)
+* Privacy & compliance notes (email/mobile handling)
+
+---
+
+## QUALITY BAR (IMPORTANT)
+
+* No shallow explanations
+* No generic SaaS fluff
+* No missing links between product features and schema
+* Everything must map cleanly from **PRD → database design**
+
+This document should be **implementation-ready**.
+
+---
+
+## FINAL OUTPUT FORMAT
+
+* Clear section headings
+* Tables where appropriate
+* Developer-friendly language
+* No code generation unless necessary for clarity
+
+---
+
+ 
