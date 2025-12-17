@@ -154,34 +154,41 @@ export default function Pledge() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
                 >
-                  {SDGs.map((goal) => (
-                    <FormItem key={goal.id} className="space-y-0">
-                      <FormControl>
-                        <div
-                          onClick={() => {
-                            form.setValue("goalId", goal.id.toString());
-                            setStep(2);
-                          }}
-                          className={`cursor-pointer aspect-square rounded-lg p-4 flex flex-col justify-between transition-all hover:scale-105 ${
-                            selectedGoalId === goal.id.toString() 
-                              ? "ring-4 ring-offset-2 ring-primary scale-105" 
-                              : ""
-                          }`}
-                          style={{ backgroundColor: goal.color }}
-                        >
-                          <span className="text-white/80 font-bold text-xl">{goal.id}</span>
-                          <span className="text-white font-bold text-sm leading-tight">{goal.title}</span>
-                          {selectedGoalId === goal.id.toString() && (
-                            <div className="absolute top-2 right-2 bg-white rounded-full p-1 text-primary">
-                              <Check className="w-4 h-4" />
+                  <FormField
+                    control={form.control}
+                    name="goalId"
+                    render={({ field }) => (
+                      <FormItem className="space-y-0">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                          {SDGs.map((goal) => (
+                            <div
+                              key={goal.id}
+                              onClick={() => {
+                                field.onChange(goal.id.toString());
+                                setStep(2);
+                              }}
+                              className={`cursor-pointer aspect-square rounded-lg p-4 flex flex-col justify-between transition-all hover:scale-105 ${
+                                field.value === goal.id.toString() 
+                                  ? "ring-4 ring-offset-2 ring-primary scale-105" 
+                                  : ""
+                              }`}
+                              style={{ backgroundColor: goal.color }}
+                            >
+                              <span className="text-white/80 font-bold text-xl">{goal.id}</span>
+                              <span className="text-white font-bold text-sm leading-tight">{goal.title}</span>
+                              {field.value === goal.id.toString() && (
+                                <div className="absolute top-2 right-2 bg-white rounded-full p-1 text-primary">
+                                  <Check className="w-4 h-4" />
+                                </div>
+                              )}
                             </div>
-                          )}
+                          ))}
                         </div>
-                      </FormControl>
-                    </FormItem>
-                  ))}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </motion.div>
               )}
 
