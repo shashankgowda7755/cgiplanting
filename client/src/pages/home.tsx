@@ -34,9 +34,6 @@ export default function Home() {
               <Button asChild size="lg" className="text-lg px-8 h-14">
                 <Link href="/pledge">Make a Pledge</Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="text-lg px-8 h-14 bg-transparent border-white text-white hover:bg-white/10 hover:text-white">
-                <Link href="/registry">View Registry</Link>
-              </Button>
             </div>
           </motion.div>
         </div>

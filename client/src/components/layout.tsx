@@ -23,7 +23,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
             <Link href="/" className="transition-colors hover:text-primary">Home</Link>
             <Link href="/pledge" className="transition-colors hover:text-primary">Take the Pledge</Link>
-            <Link href="/registry" className="transition-colors hover:text-primary">Public Registry</Link>
             <Button asChild size="sm">
               <Link href="/pledge">Start Now</Link>
             </Button>
@@ -40,7 +39,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <nav className="flex flex-col space-y-4 mt-8">
                 <Link href="/" className="text-lg font-medium">Home</Link>
                 <Link href="/pledge" className="text-lg font-medium">Take the Pledge</Link>
-                <Link href="/registry" className="text-lg font-medium">Public Registry</Link>
               </nav>
             </SheetContent>
           </Sheet>

@@ -6,7 +6,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Layout from "@/components/layout";
 import Home from "@/pages/home";
 import Pledge from "@/pages/pledge";
-import Registry from "@/pages/registry";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -15,7 +14,6 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/pledge" component={Pledge} />
-        <Route path="/registry" component={Registry} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

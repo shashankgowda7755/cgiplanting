@@ -24,9 +24,10 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronRight, ChevronLeft } from "lucide-react";
+import { Check, ChevronRight, ChevronLeft, Upload, Share2, Twitter, Linkedin, Link as LinkIcon } from "lucide-react";
 import { Certificate } from "@/components/ui/certificate-card";
 import { toPng } from "html-to-image";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   fullName: z.string().min(2, "Name must be at least 2 characters"),
@@ -35,15 +36,18 @@ const formSchema = z.object({
   story: z.string().optional(),
   city: z.string().min(2, "City is required"),
   country: z.string().min(2, "Country is required"),
+  photo: z.any().optional(), // We'll handle file validation manually or refine this
 });
 
 export default function Pledge() {
   const [location, setLocation] = useLocation();
   const searchParams = new URLSearchParams(window.location.search);
   const initialGoalId = searchParams.get("goal") || "";
+  const { toast } = useToast();
 
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const certificateRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -55,11 +59,30 @@ export default function Pledge() {
       story: "",
       city: "",
       country: "",
+      photo: undefined,
     },
   });
 
   const selectedGoalId = form.watch("goalId");
+  // Ensure we always have a goal if ID is present, otherwise fallback (handle missing ID gracefully)
   const selectedGoal = SDGs.find((g) => g.id.toString() === selectedGoalId);
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Please upload an image smaller than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+      const url = URL.createObjectURL(file);
+      setPhotoUrl(url);
+      form.setValue("photo", file);
+    }
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (step < 3) {
@@ -83,11 +106,42 @@ export default function Pledge() {
 
   const downloadCertificate = async () => {
     if (certificateRef.current) {
-      const dataUrl = await toPng(certificateRef.current, { cacheBust: true, pixelRatio: 2 });
-      const link = document.createElement("a");
-      link.download = `pledge-certificate-${selectedGoal?.id}.png`;
-      link.href = dataUrl;
-      link.click();
+      try {
+        const dataUrl = await toPng(certificateRef.current, { cacheBust: true, pixelRatio: 2 });
+        const link = document.createElement("a");
+        link.download = `pledge-certificate-${selectedGoal?.id}.png`;
+        link.href = dataUrl;
+        link.click();
+      } catch (err) {
+        console.error("Failed to generate image", err);
+        toast({
+           title: "Download failed",
+           description: "Could not generate certificate image. Please try again.",
+           variant: "destructive"
+        });
+      }
+    }
+  };
+
+  const sharePledge = (platform: string) => {
+    const text = `I just pledged to support ${selectedGoal?.title} with the Global Pledge Initiative! Join me.`;
+    const url = "https://global-pledge.replit.app";
+    
+    let shareUrl = "";
+    switch (platform) {
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+        break;
+      case 'linkedin':
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+        break;
+      case 'whatsapp':
+        shareUrl = `https://wa.me/?text=${encodeURIComponent(text + " " + url)}`;
+        break;
+    }
+    
+    if (shareUrl) {
+      window.open(shareUrl, '_blank');
     }
   };
 
@@ -117,12 +171,12 @@ export default function Pledge() {
           animate={{ opacity: 1, scale: 1 }}
           className="flex flex-col items-center"
         >
-          <div className="bg-green-50 text-green-700 px-6 py-4 rounded-lg mb-8 text-center">
-            <h2 className="text-2xl font-bold mb-2">Congratulations!</h2>
-            <p>Your pledge has been officially registered on the Global Pledge Initiative.</p>
+          <div className="bg-green-50 text-green-700 px-6 py-4 rounded-lg mb-8 text-center w-full max-w-2xl">
+            <h2 className="text-2xl font-bold mb-2">Pledge Verified!</h2>
+            <p>You are now officially part of the movement. Share your commitment with the world.</p>
           </div>
 
-          <div className="mb-8 w-full max-w-2xl flex justify-center">
+          <div className="mb-8 w-full max-w-4xl flex justify-center shadow-2xl rounded-xl overflow-hidden">
              {selectedGoal && (
                 <Certificate
                   ref={certificateRef}
@@ -131,15 +185,37 @@ export default function Pledge() {
                   story={form.getValues("story")}
                   date={new Date().toLocaleDateString()}
                   pledgeId="OFFICIAL-VERIFIED-XXXX"
+                  photoUrl={photoUrl}
                 />
              )}
           </div>
 
-          <div className="flex gap-4">
-            <Button onClick={downloadCertificate} size="lg">
-              Download Certificate
-            </Button>
-            <Button variant="outline" size="lg" onClick={() => setLocation("/")}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
+            <div className="space-y-4">
+               <h3 className="font-bold text-lg">1. Save Your Certificate</h3>
+               <Button onClick={downloadCertificate} size="lg" className="w-full">
+                 Download High-Res PNG
+               </Button>
+            </div>
+
+            <div className="space-y-4">
+               <h3 className="font-bold text-lg">2. Share to Inspire Others</h3>
+               <div className="grid grid-cols-3 gap-2">
+                 <Button variant="outline" onClick={() => sharePledge('twitter')} className="w-full">
+                   <Twitter className="w-4 h-4 mr-2" /> X
+                 </Button>
+                 <Button variant="outline" onClick={() => sharePledge('linkedin')} className="w-full">
+                   <Linkedin className="w-4 h-4 mr-2" /> In
+                 </Button>
+                 <Button variant="outline" onClick={() => sharePledge('whatsapp')} className="w-full">
+                   <Share2 className="w-4 h-4 mr-2" /> WA
+                 </Button>
+               </div>
+            </div>
+          </div>
+          
+          <div className="mt-12">
+            <Button variant="ghost" onClick={() => setLocation("/")}>
               Return Home
             </Button>
           </div>
@@ -200,6 +276,26 @@ export default function Pledge() {
                   exit={{ opacity: 0, x: -20 }}
                   className="space-y-6 max-w-lg mx-auto"
                 >
+                  <div className="flex flex-col items-center mb-6">
+                    <div className="w-32 h-32 rounded-full bg-slate-100 border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden relative group cursor-pointer hover:border-primary transition-colors">
+                      {photoUrl ? (
+                        <img src={photoUrl} alt="Preview" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="text-center p-2">
+                          <Upload className="w-8 h-8 mx-auto text-slate-400 mb-1" />
+                          <span className="text-xs text-muted-foreground">Upload Photo</span>
+                        </div>
+                      )}
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        className="absolute inset-0 opacity-0 cursor-pointer" 
+                        onChange={handlePhotoUpload}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">Required for certificate</p>
+                  </div>
+
                   <FormField
                     control={form.control}
                     name="fullName"
@@ -243,32 +339,37 @@ export default function Pledge() {
                     />
                   </div>
 
-                  <FormField
-                    control={form.control}
-                    name="country"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Country</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a country" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="USA">United States</SelectItem>
-                            <SelectItem value="UK">United Kingdom</SelectItem>
-                            <SelectItem value="CA">Canada</SelectItem>
-                            <SelectItem value="DE">Germany</SelectItem>
-                            <SelectItem value="FR">France</SelectItem>
-                            <SelectItem value="JP">Japan</SelectItem>
-                            {/* Add more as needed */}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="relative z-50"> 
+                    {/* Z-Index fix for Select dropdown overlapping subsequent fields */}
+                    <FormField
+                      control={form.control}
+                      name="country"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Country</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a country" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent className="max-h-[200px]">
+                              <SelectItem value="USA">United States</SelectItem>
+                              <SelectItem value="UK">United Kingdom</SelectItem>
+                              <SelectItem value="CA">Canada</SelectItem>
+                              <SelectItem value="DE">Germany</SelectItem>
+                              <SelectItem value="FR">France</SelectItem>
+                              <SelectItem value="JP">Japan</SelectItem>
+                              <SelectItem value="IN">India</SelectItem>
+                              <SelectItem value="BR">Brazil</SelectItem>
+                              <SelectItem value="AU">Australia</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
                   <FormField
                     control={form.control}
@@ -299,15 +400,21 @@ export default function Pledge() {
                   className="flex flex-col items-center"
                 >
                   <h3 className="text-xl font-bold mb-6">Preview Your Certificate</h3>
-                  {selectedGoal && (
-                    <div className="scale-75 md:scale-100 origin-top mb-8">
+                  {selectedGoal ? (
+                    <div className="scale-75 md:scale-100 origin-top mb-8 shadow-xl rounded-lg overflow-hidden">
                        <Certificate
                           name={form.getValues("fullName") || "Your Name"}
                           goal={selectedGoal}
                           story={form.getValues("story")}
                           date={new Date().toLocaleDateString()}
                           pledgeId="PREVIEW-MODE"
+                          photoUrl={photoUrl}
                         />
+                    </div>
+                  ) : (
+                    <div className="p-8 text-center text-muted-foreground bg-slate-50 rounded-lg">
+                      <p>Please select a goal in Step 1 to preview your certificate.</p>
+                      <Button variant="link" onClick={() => setStep(1)}>Go to Step 1</Button>
                     </div>
                   )}
                 </motion.div>
