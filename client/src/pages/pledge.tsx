@@ -24,7 +24,35 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronRight, ChevronLeft, Upload, Share2, Twitter, Linkedin, Link as LinkIcon } from "lucide-react";
+import { 
+  Check, 
+  ChevronRight, 
+  ChevronLeft, 
+  Upload, 
+  Share2, 
+  Twitter, 
+  Linkedin, 
+  Instagram,
+  Copy,
+  Wallet,
+  Utensils,
+  Heart,
+  GraduationCap,
+  Users,
+  Droplets,
+  Zap,
+  Briefcase,
+  Factory,
+  Equal,
+  Building2,
+  Recycle,
+  ThermometerSun,
+  Fish,
+  TreePine,
+  Shield,
+  Handshake,
+  Globe
+} from "lucide-react";
 import { Certificate } from "@/components/ui/certificate-card";
 import { toPng } from "html-to-image";
 import { useToast } from "@/hooks/use-toast";
@@ -38,6 +66,27 @@ const formSchema = z.object({
   country: z.string().min(2, "Country is required"),
   photo: z.any().optional(), // We'll handle file validation manually or refine this
 });
+
+// Icon mapping for SDGs
+const GoalIcons: Record<number, React.ElementType> = {
+  1: Wallet,
+  2: Utensils,
+  3: Heart,
+  4: GraduationCap,
+  5: Users,
+  6: Droplets,
+  7: Zap,
+  8: Briefcase,
+  9: Factory,
+  10: Equal,
+  11: Building2,
+  12: Recycle,
+  13: ThermometerSun,
+  14: Fish,
+  15: TreePine,
+  16: Shield,
+  17: Handshake
+};
 
 export default function Pledge() {
   const [location, setLocation] = useLocation();
@@ -107,7 +156,16 @@ export default function Pledge() {
   const downloadCertificate = async () => {
     if (certificateRef.current) {
       try {
-        const dataUrl = await toPng(certificateRef.current, { cacheBust: true, pixelRatio: 2 });
+        // Small delay to ensure rendering
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        const dataUrl = await toPng(certificateRef.current, { 
+          cacheBust: true, 
+          pixelRatio: 2,
+          skipAutoScale: true,
+          style: { transform: 'scale(1)' } // Ensure no transform issues
+        });
+        
         const link = document.createElement("a");
         link.download = `pledge-certificate-${selectedGoal?.id}.png`;
         link.href = dataUrl;
@@ -121,6 +179,14 @@ export default function Pledge() {
         });
       }
     }
+  };
+
+  const copyLink = () => {
+    navigator.clipboard.writeText("https://global-pledge.replit.app");
+    toast({
+      title: "Link Copied",
+      description: "Share this link with your friends!",
+    });
   };
 
   const sharePledge = (platform: string) => {
@@ -138,6 +204,13 @@ export default function Pledge() {
       case 'whatsapp':
         shareUrl = `https://wa.me/?text=${encodeURIComponent(text + " " + url)}`;
         break;
+      case 'instagram':
+        // Instagram doesn't support direct sharing via URL, usually prompts to open app
+        toast({
+          title: "Open Instagram",
+          description: "Post your certificate to your Story!",
+        });
+        return;
     }
     
     if (shareUrl) {
@@ -200,15 +273,21 @@ export default function Pledge() {
 
             <div className="space-y-4">
                <h3 className="font-bold text-lg">2. Share to Inspire Others</h3>
-               <div className="grid grid-cols-3 gap-2">
+               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                  <Button variant="outline" onClick={() => sharePledge('twitter')} className="w-full">
                    <Twitter className="w-4 h-4 mr-2" /> X
                  </Button>
                  <Button variant="outline" onClick={() => sharePledge('linkedin')} className="w-full">
-                   <Linkedin className="w-4 h-4 mr-2" /> In
+                   <Linkedin className="w-4 h-4 mr-2" /> LinkedIn
                  </Button>
                  <Button variant="outline" onClick={() => sharePledge('whatsapp')} className="w-full">
-                   <Share2 className="w-4 h-4 mr-2" /> WA
+                   <Share2 className="w-4 h-4 mr-2" /> WhatsApp
+                 </Button>
+                 <Button variant="outline" onClick={() => sharePledge('instagram')} className="w-full">
+                   <Instagram className="w-4 h-4 mr-2" /> Instagram
+                 </Button>
+                 <Button variant="outline" onClick={copyLink} className="w-full col-span-2 md:col-span-1">
+                   <Copy className="w-4 h-4 mr-2" /> Copy Link
                  </Button>
                </div>
             </div>
@@ -237,29 +316,35 @@ export default function Pledge() {
                     render={({ field }) => (
                       <FormItem className="space-y-0">
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                          {SDGs.map((goal) => (
-                            <div
-                              key={goal.id}
-                              onClick={() => {
-                                field.onChange(goal.id.toString());
-                                setStep(2);
-                              }}
-                              className={`cursor-pointer aspect-square rounded-lg p-4 flex flex-col justify-between transition-all hover:scale-105 ${
-                                field.value === goal.id.toString() 
-                                  ? "ring-4 ring-offset-2 ring-primary scale-105" 
-                                  : ""
-                              }`}
-                              style={{ backgroundColor: goal.color }}
-                            >
-                              <span className="text-white/80 font-bold text-xl">{goal.id}</span>
-                              <span className="text-white font-bold text-sm leading-tight">{goal.title}</span>
-                              {field.value === goal.id.toString() && (
-                                <div className="absolute top-2 right-2 bg-white rounded-full p-1 text-primary">
-                                  <Check className="w-4 h-4" />
+                          {SDGs.map((goal) => {
+                            const Icon = GoalIcons[goal.id] || Globe;
+                            return (
+                              <div
+                                key={goal.id}
+                                onClick={() => {
+                                  field.onChange(goal.id.toString());
+                                  setStep(2);
+                                }}
+                                className={`cursor-pointer aspect-square rounded-xl p-4 flex flex-col justify-between transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+                                  field.value === goal.id.toString() 
+                                    ? "ring-4 ring-offset-2 ring-primary scale-105 shadow-xl" 
+                                    : "shadow-sm opacity-90 hover:opacity-100"
+                                }`}
+                                style={{ backgroundColor: goal.color }}
+                              >
+                                <div className="flex justify-between items-start">
+                                  <span className="text-white/90 font-bold text-2xl font-serif">{goal.id}</span>
+                                  <Icon className="text-white/40 w-8 h-8" />
                                 </div>
-                              )}
-                            </div>
-                          ))}
+                                <span className="text-white font-bold text-sm leading-tight">{goal.title}</span>
+                                {field.value === goal.id.toString() && (
+                                  <div className="absolute top-2 right-2 bg-white rounded-full p-1 text-primary shadow-sm">
+                                    <Check className="w-4 h-4" />
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
                         <FormMessage />
                       </FormItem>

@@ -20,12 +20,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-            <Link href="/" className="transition-colors hover:text-primary">Home</Link>
-            <Link href="/pledge" className="transition-colors hover:text-primary">Take the Pledge</Link>
-            <Button asChild size="sm">
-              <Link href="/pledge">Start Now</Link>
-            </Button>
+          <nav className="hidden md:flex items-center space-x-8 text-sm font-medium">
+            <Link href="/" className="transition-colors hover:text-primary/80">Home</Link>
+            <Link href="/pledge" className={`transition-all px-4 py-2 rounded-full ${
+              window.location.pathname === '/pledge' 
+                ? 'bg-primary text-primary-foreground shadow-md' 
+                : 'bg-secondary/50 hover:bg-secondary text-secondary-foreground'
+            }`}>
+              Take the Pledge
+            </Link>
           </nav>
 
           {/* Mobile Nav */}
