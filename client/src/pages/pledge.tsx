@@ -341,18 +341,24 @@ export default function Pledge() {
             <p>You are now officially part of the movement. Share your commitment with the world.</p>
           </div>
 
-          <div className="mb-8 w-full max-w-4xl flex justify-center shadow-2xl rounded-xl overflow-hidden">
-             {selectedGoal && (
-                <Certificate
-                  ref={certificateRef}
-                  name={form.getValues("fullName")}
-                  goal={selectedGoal}
-                  story={form.getValues("story")}
-                  date={new Date().toLocaleDateString()}
-                  pledgeId="OFFICIAL-VERIFIED-XXXX"
-                  photoUrl={photoUrl}
-                />
-             )}
+          <div ref={certificateRef} className="mb-8 w-full max-w-3xl relative shadow-2xl rounded-xl overflow-hidden">
+            <img src="/certificate-template.jpg" alt="Certificate" className="w-full block" />
+            
+            {/* Overlay user photo in circular frame */}
+            {photoUrl && (
+              <div className="absolute" style={{ left: '33%', top: '32%', transform: 'translate(-50%, -50%)' }}>
+                <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-yellow-400 shadow-lg">
+                  <img src={photoUrl} alt="Your photo" className="w-full h-full object-cover" />
+                </div>
+              </div>
+            )}
+            
+            {/* Overlay user name */}
+            <div className="absolute" style={{ right: '15%', top: '32%', transform: 'translateY(-50%)' }}>
+              <div className="text-white text-4xl font-bold text-center" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
+                {form.getValues("fullName") || "YOUR NAME"}
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
