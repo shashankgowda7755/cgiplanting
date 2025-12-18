@@ -314,47 +314,69 @@ export default function Pledge() {
             <p>Your certificate is ready to download and share with the world.</p>
           </div>
 
-          <div ref={certificateRef} className="mb-8 w-full max-w-2xl relative shadow-2xl rounded-lg overflow-visible" style={{ position: 'relative' }}>
-            <img src="/certificate-template.jpg" alt="Certificate" className="w-full block" />
-            
-            {/* Photo overlay */}
-            {photoUrl && (
-              <div className="absolute" style={{ 
-                left: '35%', 
-                top: '42%', 
-                transform: 'translate(-50%, -50%)',
-                zIndex: 10
-              }}>
-                <div className="rounded-full overflow-hidden border-8 border-white shadow-2xl" style={{ 
-                  width: '260px', 
-                  height: '260px',
-                  backgroundColor: '#fff'
+          <div ref={certificateRef} className="mb-8 w-full max-w-2xl shadow-2xl rounded-lg" style={{ position: 'relative', display: 'inline-block' }}>
+            <div style={{ position: 'relative', width: '100%' }}>
+              <img src="/certificate-template.jpg" alt="Certificate" className="w-full block" style={{ display: 'block' }} />
+              
+              {/* Photo overlay - positioned absolutely over the template */}
+              {photoUrl && (
+                <div style={{ 
+                  position: 'absolute',
+                  left: '33%', 
+                  top: '40%', 
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: 20,
+                  pointerEvents: 'none'
                 }}>
-                  <img src={photoUrl} alt="Certificate photo" className="w-full h-full object-cover" />
+                  <div style={{ 
+                    width: '280px', 
+                    height: '280px',
+                    borderRadius: '50%',
+                    overflow: 'hidden',
+                    border: '10px solid white',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                    backgroundColor: '#fff'
+                  }}>
+                    <img 
+                      src={photoUrl} 
+                      alt="Your certificate photo" 
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        display: 'block'
+                      }} 
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Name overlay */}
-            <div className="absolute" style={{ 
-              left: '65%', 
-              top: '32%',
-              zIndex: 10
-            }}>
-              <div className="text-white font-bold" style={{ 
-                fontSize: '48px',
-                textShadow: '3px 3px 6px rgba(0,0,0,0.4)',
-                lineHeight: '1.1',
-                fontFamily: 'Arial, sans-serif'
+              {/* Name overlay */}
+              <div style={{ 
+                position: 'absolute',
+                left: '66%', 
+                top: '30%',
+                zIndex: 20,
+                pointerEvents: 'none'
               }}>
-                {form.getValues("fullName") && form.getValues("fullName").split(' ').length > 1 ? (
-                  <>
-                    <div>{form.getValues("fullName").split(' ')[0]}</div>
-                    <div style={{ marginTop: '8px' }}>{form.getValues("fullName").split(' ').slice(1).join(' ')}</div>
-                  </>
-                ) : (
-                  form.getValues("fullName") || "PLEDGER"
-                )}
+                <div style={{ 
+                  color: 'white',
+                  fontWeight: 'bold',
+                  fontSize: '52px',
+                  textShadow: '3px 3px 8px rgba(0,0,0,0.5)',
+                  lineHeight: '1.1',
+                  fontFamily: 'Arial, sans-serif',
+                  textAlign: 'left'
+                }}>
+                  {form.getValues("fullName") && form.getValues("fullName").split(' ').length > 1 ? (
+                    <>
+                      <div>{form.getValues("fullName").split(' ')[0]}</div>
+                      <div style={{ marginTop: '12px' }}>{form.getValues("fullName").split(' ').slice(1).join(' ')}</div>
+                    </>
+                  ) : (
+                    form.getValues("fullName") || "YOUR NAME"
+                  )}
+                </div>
               </div>
             </div>
           </div>
