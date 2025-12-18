@@ -1,11 +1,6 @@
 import { Link } from "wouter";
-import { Globe, Menu, Mail, MapPin, Phone, Instagram, Twitter, Linkedin, Facebook } from "lucide-react";
+import { Globe, Mail, MapPin, Phone, Instagram, Twitter, Linkedin, Facebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -52,23 +47,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               Take the Pledge
             </Link>
           </nav>
-
-          {/* Mobile Nav */}
-          <Sheet>
-            <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon" className="text-slate-700 hover:bg-white/50">
-                <Menu className="h-6 w-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-white/95 backdrop-blur-xl border-l border-white/30">
-              <nav className="flex flex-col space-y-6 mt-10">
-                <Link href="/" className="text-xl font-serif font-bold text-slate-900">Home</Link>
-                <a href="#about" className="text-lg font-semibold text-slate-600 hover:text-emerald-600 transition-colors">About</a>
-                <a href="#impact" className="text-lg font-semibold text-slate-600 hover:text-emerald-600 transition-colors">Impact</a>
-                <Link href="/pledge" className="text-lg font-bold bg-gradient-to-r from-emerald-500 to-green-600 text-white px-4 py-2 rounded-full inline-block">Take the Pledge</Link>
-              </nav>
-            </SheetContent>
-          </Sheet>
         </div>
       </header>
 

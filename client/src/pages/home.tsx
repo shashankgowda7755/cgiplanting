@@ -172,6 +172,45 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* Global Metrics Section */}
+      <section className="bg-gradient-to-r from-white via-emerald-50/30 to-white py-24">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-16 text-center"
+          >
+            <h2 className="text-5xl md:text-6xl font-black text-slate-900 mb-4 font-serif">Global Impact</h2>
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">See the measurable impact of our pledges across the world</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { icon: Users, label: "Global Citizens", value: "1.2M+", color: "text-emerald-600", bg: "bg-gradient-to-br from-emerald-100 to-green-100", glow: "shadow-emerald-500/20" },
+              { icon: Globe, label: "Countries Represented", value: "193", color: "text-blue-600", bg: "bg-gradient-to-br from-blue-100 to-cyan-100", glow: "shadow-blue-500/20" },
+              { icon: Award, label: "Sustainable Goals", value: "17", color: "text-amber-600", bg: "bg-gradient-to-br from-amber-100 to-yellow-100", glow: "shadow-amber-500/20" }
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: -20, scale: 0.85 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.15, type: "spring" }}
+                whileHover={{ scale: 1.05 }}
+                className="text-center"
+              >
+                <div className={`w-28 h-28 ${stat.bg} ${stat.color} rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl ${stat.glow} backdrop-blur-xl border border-white/50`}>
+                  <stat.icon className="w-14 h-14" />
+                </div>
+                <h3 className="text-6xl font-black text-slate-900 mb-3 font-serif">{stat.value}</h3>
+                <p className="text-slate-600 font-bold uppercase tracking-wider text-sm">{stat.label}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
