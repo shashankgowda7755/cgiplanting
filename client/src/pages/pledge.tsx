@@ -163,125 +163,76 @@ export default function Pledge() {
     if (!isDownloading) {
       setIsDownloading(true);
       try {
-        // Create canvas certificate without external font dependencies
         const canvas = document.createElement('canvas');
-        canvas.width = 1400;
-        canvas.height = 990;
-        
+        canvas.width = 1200;
+        canvas.height = 1600;
         const ctx = canvas.getContext('2d');
         if (!ctx) throw new Error('Could not get canvas context');
+
+        // Load template image
+        const templateImg = new Image();
+        templateImg.crossOrigin = "anonymous";
+        templateImg.src = '/certificate-template.jpg';
         
-        // White background
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        // Border
-        ctx.strokeStyle = selectedGoal?.color || '#000000';
-        ctx.lineWidth = 8;
-        ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
-        
-        // Corner accents
-        const cornerSize = 40;
-        ctx.lineWidth = 8;
-        ctx.strokeStyle = selectedGoal?.color || '#000000';
-        
-        // Top-left
-        ctx.strokeRect(20, 20, cornerSize, cornerSize);
-        // Top-right
-        ctx.strokeRect(canvas.width - 60, 20, cornerSize, cornerSize);
-        // Bottom-left
-        ctx.strokeRect(20, canvas.height - 60, cornerSize, cornerSize);
-        // Bottom-right
-        ctx.strokeRect(canvas.width - 60, canvas.height - 60, cornerSize, cornerSize);
-        
-        // Title
-        ctx.font = 'bold 48px Arial, sans-serif';
-        ctx.fillStyle = '#1a1a1a';
-        ctx.textAlign = 'center';
-        ctx.fillText('CERTIFICATE OF PLEDGE', canvas.width / 2, 80);
-        
-        // Subtitle
-        ctx.font = '24px Arial, sans-serif';
-        ctx.fillStyle = '#666666';
-        ctx.fillText('Official Commitment to Sustainable Development', canvas.width / 2, 120);
-        
-        // Main text
-        ctx.font = '28px Arial, sans-serif';
-        ctx.fillStyle = '#333333';
-        ctx.textAlign = 'center';
-        ctx.fillText('This certifies that', canvas.width / 2, 220);
-        
-        // Name
-        ctx.font = 'bold 42px Arial, sans-serif';
-        ctx.fillStyle = '#1a1a1a';
-        ctx.fillText(form.getValues("fullName") || "Your Name", canvas.width / 2, 290);
-        
-        // Goal text
-        ctx.font = '24px Arial, sans-serif';
-        ctx.fillStyle = '#333333';
-        ctx.textAlign = 'center';
-        ctx.fillText(`Has officially pledged to support`, canvas.width / 2, 370);
-        
-        ctx.font = 'bold 28px Arial, sans-serif';
-        ctx.fillStyle = selectedGoal?.color || '#000000';
-        ctx.fillText(`SDG ${selectedGoal?.id}: ${selectedGoal?.title}`, canvas.width / 2, 420);
-        
-        // Story if exists
-        if (form.getValues("story")) {
-          ctx.font = 'italic 18px Arial, sans-serif';
-          ctx.fillStyle = '#666666';
-          const story = form.getValues("story");
-          const maxWidth = canvas.width - 100;
-          const words = story.split(' ');
-          let line = '';
-          let y = 480;
+        await new Promise((resolve, reject) => {
+          templateImg.onload = resolve;
+          templateImg.onerror = reject;
+          setTimeout(reject, 5000);
+        });
+
+        // Draw template
+        ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
+
+        // Draw circular photo at correct position (center-left of template)
+        if (photoUrl) {
+          const photoImg = new Image();
+          photoImg.crossOrigin = "anonymous";
+          photoImg.src = photoUrl;
           
-          words.forEach((word) => {
-            const testLine = line + word + ' ';
-            const metrics = ctx.measureText(testLine);
-            if (metrics.width > maxWidth && line) {
-              ctx.fillText(line, canvas.width / 2, y);
-              line = word + ' ';
-              y += 25;
-            } else {
-              line = testLine;
-            }
+          await new Promise((resolve, reject) => {
+            photoImg.onload = resolve;
+            photoImg.onerror = reject;
+            setTimeout(reject, 5000);
           });
-          if (line) ctx.fillText(line, canvas.width / 2, y);
+
+          // Circular crop positioned where the circular frame is
+          const circleX = canvas.width * 0.25;
+          const circleY = canvas.height * 0.35;
+          const circleRadius = 120;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2);
+          ctx.clip();
+          ctx.drawImage(photoImg, circleX - circleRadius, circleY - circleRadius, circleRadius * 2, circleRadius * 2);
+          ctx.restore();
+
+          // Add circular border
+          ctx.strokeStyle = '#E63946';
+          ctx.lineWidth = 8;
+          ctx.beginPath();
+          ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2);
+          ctx.stroke();
         }
-        
-        // Date and verification
-        ctx.font = '16px Arial, sans-serif';
-        ctx.fillStyle = '#999999';
-        ctx.textAlign = 'left';
-        ctx.fillText('DATE ISSUED', 60, canvas.height - 120);
-        
-        ctx.font = 'bold 20px Arial, sans-serif';
-        ctx.fillStyle = '#333333';
-        ctx.fillText(new Date().toLocaleDateString(), 60, canvas.height - 80);
-        
+
+        // Draw user's name where "HAFIZ KHAN" is positioned
+        const name = form.getValues("fullName") || "YOUR NAME";
+        ctx.font = 'bold 68px Arial, sans-serif';
+        ctx.fillStyle = '#FFFFFF';
         ctx.textAlign = 'right';
-        ctx.font = '14px Arial, sans-serif';
-        ctx.fillStyle = '#999999';
-        ctx.fillText('OFFICIAL VERIFY', canvas.width - 60, canvas.height - 120);
-        
-        ctx.font = 'bold 16px Arial, sans-serif';
-        ctx.fillStyle = '#333333';
-        ctx.fillText('OFFICIAL', canvas.width - 60, canvas.height - 80);
-        
-        // Footer
-        ctx.font = '18px Arial, sans-serif';
-        ctx.fillStyle = '#666666';
-        ctx.textAlign = 'center';
-        ctx.fillText('Global Pledge Initiative', canvas.width / 2, canvas.height - 40);
-        
+        ctx.shadowColor = 'rgba(0,0,0,0.3)';
+        ctx.shadowBlur = 4;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        ctx.fillText(name, canvas.width - 80, canvas.height * 0.35);
+
         // Convert to blob and download
         canvas.toBlob((blob) => {
           if (blob) {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `pledge-certificate-${selectedGoal?.id || 'official'}-${Date.now()}.png`;
+            link.download = `pledge-certificate-${form.getValues("fullName") || 'pledger'}-${Date.now()}.png`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -292,7 +243,7 @@ export default function Pledge() {
               description: "Certificate downloaded successfully!",
             });
           }
-        }, 'image/png');
+        }, 'image/jpeg', 0.95);
       } catch (err) {
         console.error("Failed to generate certificate:", err);
         toast({
@@ -610,23 +561,18 @@ export default function Pledge() {
                   className="flex flex-col items-center"
                 >
                   <h3 className="text-xl font-bold mb-6">Preview Your Certificate</h3>
-                  {selectedGoal ? (
-                    <div className="scale-75 md:scale-100 origin-top mb-8 shadow-xl rounded-lg overflow-hidden">
-                       <Certificate
-                          name={form.getValues("fullName") || "Your Name"}
-                          goal={selectedGoal}
-                          story={form.getValues("story")}
-                          date={new Date().toLocaleDateString()}
-                          pledgeId="PREVIEW-MODE"
-                          photoUrl={photoUrl}
-                        />
-                    </div>
-                  ) : (
-                    <div className="p-8 text-center text-muted-foreground bg-slate-50 rounded-lg">
-                      <p>Please select a goal in Step 1 to preview your certificate.</p>
-                      <Button variant="link" onClick={() => setStep(1)}>Go to Step 1</Button>
-                    </div>
-                  )}
+                  <motion.img 
+                    src="/certificate-template.jpg" 
+                    alt="Certificate Preview"
+                    className="max-w-2xl w-full shadow-2xl rounded-lg mb-8"
+                    key={`${form.getValues("fullName")}-${photoUrl}`}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                  />
+                  <div className="text-center text-sm text-muted-foreground max-w-2xl">
+                    <p className="mb-2">✓ Photo and name will be updated on download</p>
+                    <p>Your uploaded photo will appear in the circular frame</p>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
