@@ -160,70 +160,146 @@ export default function Pledge() {
   }
 
   const downloadCertificate = async () => {
-    if (certificateRef.current && !isDownloading) {
+    if (!isDownloading) {
       setIsDownloading(true);
       try {
-        // Wait for all content to render
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Create canvas certificate without external font dependencies
+        const canvas = document.createElement('canvas');
+        canvas.width = 1400;
+        canvas.height = 990;
         
-        const element = certificateRef.current;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('Could not get canvas context');
         
-        // Clone the element to ensure clean rendering
-        const clone = element.cloneNode(true) as HTMLElement;
-        clone.style.position = 'absolute';
-        clone.style.left = '-9999px';
-        clone.style.top = '-9999px';
-        document.body.appendChild(clone);
+        // White background
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        try {
-          const dataUrl = await toPng(clone, { 
-            cacheBust: true, 
-            pixelRatio: 2
-          });
+        // Border
+        ctx.strokeStyle = selectedGoal?.color || '#000000';
+        ctx.lineWidth = 8;
+        ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+        
+        // Corner accents
+        const cornerSize = 40;
+        ctx.lineWidth = 8;
+        ctx.strokeStyle = selectedGoal?.color || '#000000';
+        
+        // Top-left
+        ctx.strokeRect(20, 20, cornerSize, cornerSize);
+        // Top-right
+        ctx.strokeRect(canvas.width - 60, 20, cornerSize, cornerSize);
+        // Bottom-left
+        ctx.strokeRect(20, canvas.height - 60, cornerSize, cornerSize);
+        // Bottom-right
+        ctx.strokeRect(canvas.width - 60, canvas.height - 60, cornerSize, cornerSize);
+        
+        // Title
+        ctx.font = 'bold 48px Arial, sans-serif';
+        ctx.fillStyle = '#1a1a1a';
+        ctx.textAlign = 'center';
+        ctx.fillText('CERTIFICATE OF PLEDGE', canvas.width / 2, 80);
+        
+        // Subtitle
+        ctx.font = '24px Arial, sans-serif';
+        ctx.fillStyle = '#666666';
+        ctx.fillText('Official Commitment to Sustainable Development', canvas.width / 2, 120);
+        
+        // Main text
+        ctx.font = '28px Arial, sans-serif';
+        ctx.fillStyle = '#333333';
+        ctx.textAlign = 'center';
+        ctx.fillText('This certifies that', canvas.width / 2, 220);
+        
+        // Name
+        ctx.font = 'bold 42px Arial, sans-serif';
+        ctx.fillStyle = '#1a1a1a';
+        ctx.fillText(form.getValues("fullName") || "Your Name", canvas.width / 2, 290);
+        
+        // Goal text
+        ctx.font = '24px Arial, sans-serif';
+        ctx.fillStyle = '#333333';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Has officially pledged to support`, canvas.width / 2, 370);
+        
+        ctx.font = 'bold 28px Arial, sans-serif';
+        ctx.fillStyle = selectedGoal?.color || '#000000';
+        ctx.fillText(`SDG ${selectedGoal?.id}: ${selectedGoal?.title}`, canvas.width / 2, 420);
+        
+        // Story if exists
+        if (form.getValues("story")) {
+          ctx.font = 'italic 18px Arial, sans-serif';
+          ctx.fillStyle = '#666666';
+          const story = form.getValues("story");
+          const maxWidth = canvas.width - 100;
+          const words = story.split(' ');
+          let line = '';
+          let y = 480;
           
-          const link = document.createElement("a");
-          link.download = `pledge-certificate-${selectedGoal?.id || 'official'}-${Date.now()}.png`;
-          link.href = dataUrl;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          
-          toast({
-            title: "Success",
-            description: "Certificate downloaded successfully!",
+          words.forEach((word) => {
+            const testLine = line + word + ' ';
+            const metrics = ctx.measureText(testLine);
+            if (metrics.width > maxWidth && line) {
+              ctx.fillText(line, canvas.width / 2, y);
+              line = word + ' ';
+              y += 25;
+            } else {
+              line = testLine;
+            }
           });
-        } finally {
-          document.body.removeChild(clone);
+          if (line) ctx.fillText(line, canvas.width / 2, y);
         }
-      } catch (err) {
-        console.error("Failed to generate image:", err);
         
-        // Fallback: Try direct screenshot approach
-        try {
-          if (certificateRef.current) {
-            const canvas = await toPng(certificateRef.current, { 
-              cacheBust: true,
-              backgroundColor: '#ffffff',
-              pixelRatio: 1
-            });
-            const link = document.createElement("a");
+        // Date and verification
+        ctx.font = '16px Arial, sans-serif';
+        ctx.fillStyle = '#999999';
+        ctx.textAlign = 'left';
+        ctx.fillText('DATE ISSUED', 60, canvas.height - 120);
+        
+        ctx.font = 'bold 20px Arial, sans-serif';
+        ctx.fillStyle = '#333333';
+        ctx.fillText(new Date().toLocaleDateString(), 60, canvas.height - 80);
+        
+        ctx.textAlign = 'right';
+        ctx.font = '14px Arial, sans-serif';
+        ctx.fillStyle = '#999999';
+        ctx.fillText('OFFICIAL VERIFY', canvas.width - 60, canvas.height - 120);
+        
+        ctx.font = 'bold 16px Arial, sans-serif';
+        ctx.fillStyle = '#333333';
+        ctx.fillText('OFFICIAL', canvas.width - 60, canvas.height - 80);
+        
+        // Footer
+        ctx.font = '18px Arial, sans-serif';
+        ctx.fillStyle = '#666666';
+        ctx.textAlign = 'center';
+        ctx.fillText('Global Pledge Initiative', canvas.width / 2, canvas.height - 40);
+        
+        // Convert to blob and download
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
             link.download = `pledge-certificate-${selectedGoal?.id || 'official'}-${Date.now()}.png`;
-            link.href = canvas;
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
             
             toast({
-              title: "Success",
+              title: "Success!",
               description: "Certificate downloaded successfully!",
             });
           }
-        } catch (fallbackErr) {
-          console.error("Fallback also failed:", fallbackErr);
-          toast({
-            title: "Download failed",
-            description: "Could not generate certificate. Try refreshing and try again.",
-            variant: "destructive"
-          });
-        }
+        }, 'image/png');
+      } catch (err) {
+        console.error("Failed to generate certificate:", err);
+        toast({
+          title: "Download failed",
+          description: "Could not generate certificate. Please try again.",
+          variant: "destructive"
+        });
       } finally {
         setIsDownloading(false);
       }
