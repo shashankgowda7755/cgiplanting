@@ -279,29 +279,34 @@ export default function Pledge() {
 
   return (
     <div className="container mx-auto px-6 py-12 max-w-4xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-serif font-bold text-slate-900">Take the Pledge</h1>
-        <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
-          <span className={step >= 1 ? "text-primary font-bold" : ""}>1. Choose Goal</span>
-          <ChevronRight className="w-4 h-4" />
-          <span className={step >= 2 ? "text-primary font-bold" : ""}>2. Your Details</span>
-          <ChevronRight className="w-4 h-4" />
-          <span className={step >= 3 ? "text-primary font-bold" : ""}>3. Preview</span>
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="mb-12 bg-gradient-to-r from-white/40 to-emerald-50/40 backdrop-blur-xl rounded-2xl p-8 border border-white/30 shadow-lg"
+      >
+        <h1 className="text-5xl font-black font-serif text-slate-900 mb-6">Take the Pledge</h1>
+        <div className="flex items-center gap-3 text-sm font-bold">
+          <span className={`px-3 py-1.5 rounded-full transition-all ${step >= 1 ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg" : "bg-slate-100 text-slate-600"}`}>1. Choose Goal</span>
+          <ChevronRight className="w-5 h-5 text-slate-400" />
+          <span className={`px-3 py-1.5 rounded-full transition-all ${step >= 2 ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg" : "bg-slate-100 text-slate-600"}`}>2. Your Details</span>
+          <ChevronRight className="w-5 h-5 text-slate-400" />
+          <span className={`px-3 py-1.5 rounded-full transition-all ${step >= 3 ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg" : "bg-slate-100 text-slate-600"}`}>3. Preview</span>
           {step >= 4 && (
             <>
-              <ChevronRight className="w-4 h-4" />
-              <span className="text-primary font-bold">4. Certificate</span>
+              <ChevronRight className="w-5 h-5 text-slate-400" />
+              <span className="px-3 py-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg">4. Certificate</span>
             </>
           )}
         </div>
-        <div className="h-1 bg-slate-100 mt-4 rounded-full overflow-hidden">
+        <div className="h-2 bg-slate-200 mt-6 rounded-full overflow-hidden backdrop-blur-sm">
           <motion.div 
-            className="h-full bg-primary"
+            className="h-full bg-gradient-to-r from-emerald-500 to-green-600 rounded-full shadow-lg shadow-emerald-500/50"
             initial={{ width: "0%" }}
             animate={{ width: `${Math.min((step / 4) * 100, 100)}%` }}
+            transition={{ type: "spring", stiffness: 100 }}
           />
         </div>
-      </div>
+      </motion.div>
 
       {step === 4 ? (
         <motion.div 
@@ -309,10 +314,15 @@ export default function Pledge() {
           animate={{ opacity: 1, scale: 1 }}
           className="flex flex-col items-center"
         >
-          <div className="bg-green-50 text-green-700 px-6 py-4 rounded-lg mb-8 text-center w-full">
-            <h2 className="text-2xl font-bold mb-2">Pledge Verified! 🎉</h2>
-            <p>Your certificate is ready to download and share with the world.</p>
-          </div>
+          <motion.div 
+            initial={{ y: -10 }}
+            animate={{ y: 0 }}
+            transition={{ delay: 0.2, type: "spring" }}
+            className="bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 px-8 py-6 rounded-2xl mb-8 text-center w-full border border-emerald-200 shadow-lg"
+          >
+            <h2 className="text-3xl font-black mb-3 font-serif">Pledge Verified! 🎉</h2>
+            <p className="text-lg">Your certificate is ready to download and share with the world.</p>
+          </motion.div>
 
           <div ref={certificateRef} className="mb-8 w-full max-w-2xl shadow-2xl rounded-lg" style={{ position: 'relative', width: '100%' }}>
             {/* Template base image */}
@@ -393,27 +403,27 @@ export default function Pledge() {
           </div>
 
           <div className="w-full max-w-2xl space-y-6">
-            <Button onClick={downloadCertificate} size="lg" className="w-full" disabled={isDownloading}>
-              <Download className="w-4 h-4 mr-2" />
+            <Button onClick={downloadCertificate} size="lg" className="w-full h-14 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold shadow-xl hover:shadow-2xl transition-all" disabled={isDownloading}>
+              <Download className="w-5 h-5 mr-2" />
               {isDownloading ? "Generating..." : "Download Certificate"}
             </Button>
 
-            <div className="border-t pt-6">
-              <h3 className="font-bold mb-4">Share Your Achievement</h3>
-              <div className="grid grid-cols-3 gap-2">
-                <Button variant="outline" onClick={() => shareOnSocial('twitter')} size="sm">
-                  <Twitter className="w-4 h-4" />
+            <div className="border-t border-slate-200 pt-8">
+              <h3 className="font-black text-lg mb-6 text-slate-900">Share Your Achievement</h3>
+              <div className="grid grid-cols-3 gap-4">
+                <Button variant="outline" onClick={() => shareOnSocial('twitter')} size="lg" className="h-12 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-300 transition-all">
+                  <Twitter className="w-5 h-5" />
                 </Button>
-                <Button variant="outline" onClick={() => shareOnSocial('linkedin')} size="sm">
-                  <Linkedin className="w-4 h-4" />
+                <Button variant="outline" onClick={() => shareOnSocial('linkedin')} size="lg" className="h-12 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-300 transition-all">
+                  <Linkedin className="w-5 h-5" />
                 </Button>
-                <Button variant="outline" onClick={() => shareOnSocial('whatsapp')} size="sm">
-                  <Share2 className="w-4 h-4" />
+                <Button variant="outline" onClick={() => shareOnSocial('whatsapp')} size="lg" className="h-12 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-300 transition-all">
+                  <Share2 className="w-5 h-5" />
                 </Button>
               </div>
             </div>
 
-            <Button variant="ghost" onClick={() => setLocation("/")} className="w-full">
+            <Button variant="ghost" onClick={() => setLocation("/")} className="w-full h-12 text-emerald-600 hover:bg-emerald-50 font-bold transition-all">
               Return Home
             </Button>
           </div>

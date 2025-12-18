@@ -9,37 +9,46 @@ import {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-900">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-white via-slate-50 to-slate-100 font-sans text-slate-900">
       {/* Top Bar for Official Look */}
-      <div className="bg-slate-900 text-white py-2 px-4 text-xs font-medium tracking-wide">
+      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white py-2.5 px-4 text-xs font-medium tracking-widest backdrop-blur-sm">
         <div className="container flex justify-between items-center">
-          <span>An Official Initiative for Sustainable Development</span>
-          <div className="flex gap-4">
-            <a href="#" className="hover:text-yellow-400 transition-colors">Press</a>
-            <a href="#" className="hover:text-yellow-400 transition-colors">Partners</a>
-            <a href="#" className="hover:text-yellow-400 transition-colors">Global Impact</a>
+          <span className="text-white/90">An Official Initiative for Sustainable Development</span>
+          <div className="hidden sm:flex gap-6">
+            <a href="#" className="text-white/70 hover:text-emerald-300 transition-all duration-300 hover:underline decoration-emerald-300 underline-offset-2">Press</a>
+            <a href="#" className="text-white/70 hover:text-emerald-300 transition-all duration-300 hover:underline decoration-emerald-300 underline-offset-2">Partners</a>
+            <a href="#" className="text-white/70 hover:text-emerald-300 transition-all duration-300 hover:underline decoration-emerald-300 underline-offset-2">Global Impact</a>
           </div>
         </div>
       </div>
 
-      <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 shadow-sm">
+      <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-white/40 backdrop-blur-xl supports-[backdrop-filter]:bg-white/30 shadow-lg shadow-black/5">
         <div className="container flex h-20 items-center justify-between">
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform duration-300">
+            <div className="h-11 w-11 rounded-full bg-gradient-to-br from-emerald-500 via-green-600 to-teal-700 flex items-center justify-center text-white shadow-xl shadow-green-500/20 group-hover:scale-110 group-hover:shadow-green-500/40 transition-all duration-300">
               <Globe className="h-6 w-6" />
             </div>
             <div className="flex flex-col">
-              <span className="font-serif font-bold text-xl tracking-tight leading-none text-slate-900 group-hover:text-green-700 transition-colors">Global Pledge</span>
-              <span className="text-xs font-medium tracking-widest text-slate-500 uppercase">Initiative</span>
+              <span className="font-serif font-black text-xl tracking-tight leading-none text-slate-900 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-emerald-600 group-hover:to-green-700 transition-all duration-300">Global Pledge</span>
+              <span className="text-xs font-bold tracking-widest text-emerald-600 uppercase">Initiative</span>
             </div>
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center space-x-8 text-sm font-medium">
-            <Link href="/" className="text-slate-600 hover:text-green-700 transition-colors font-medium">Home</Link>
-            <a href="#about" className="text-slate-600 hover:text-green-700 transition-colors font-medium">About</a>
-            <a href="#impact" className="text-slate-600 hover:text-green-700 transition-colors font-medium">Impact</a>
-            <Link href="/pledge" className="transition-all px-6 py-2.5 rounded-full bg-green-700 text-white shadow-lg hover:bg-green-800 hover:shadow-green-700/30 hover:-translate-y-0.5 font-bold tracking-wide">
+          <nav className="hidden md:flex items-center space-x-8 text-sm font-semibold">
+            <Link href="/" className="text-slate-700 hover:text-emerald-600 transition-colors duration-200 relative group">
+              Home
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-emerald-500 to-green-600 group-hover:w-full transition-all duration-300"></span>
+            </Link>
+            <a href="#about" className="text-slate-700 hover:text-emerald-600 transition-colors duration-200 relative group">
+              About
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-emerald-500 to-green-600 group-hover:w-full transition-all duration-300"></span>
+            </a>
+            <a href="#impact" className="text-slate-700 hover:text-emerald-600 transition-colors duration-200 relative group">
+              Impact
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-emerald-500 to-green-600 group-hover:w-full transition-all duration-300"></span>
+            </a>
+            <Link href="/pledge" className="px-6 py-2.5 rounded-full bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-105 font-bold tracking-wider transition-all duration-300">
               Take the Pledge
             </Link>
           </nav>
@@ -47,16 +56,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {/* Mobile Nav */}
           <Sheet>
             <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon" className="text-slate-700">
+              <Button variant="ghost" size="icon" className="text-slate-700 hover:bg-white/50">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+            <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-white/95 backdrop-blur-xl border-l border-white/30">
               <nav className="flex flex-col space-y-6 mt-10">
                 <Link href="/" className="text-xl font-serif font-bold text-slate-900">Home</Link>
-                <a href="#about" className="text-lg font-medium text-slate-600">About</a>
-                <a href="#impact" className="text-lg font-medium text-slate-600">Impact</a>
-                <Link href="/pledge" className="text-lg font-bold text-green-700">Take the Pledge</Link>
+                <a href="#about" className="text-lg font-semibold text-slate-600 hover:text-emerald-600 transition-colors">About</a>
+                <a href="#impact" className="text-lg font-semibold text-slate-600 hover:text-emerald-600 transition-colors">Impact</a>
+                <Link href="/pledge" className="text-lg font-bold bg-gradient-to-r from-emerald-500 to-green-600 text-white px-4 py-2 rounded-full inline-block">Take the Pledge</Link>
               </nav>
             </SheetContent>
           </Sheet>
@@ -68,7 +77,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* Professional Footer */}
-      <footer className="bg-slate-900 text-slate-300 border-t border-slate-800">
+      <footer className="bg-gradient-to-b from-slate-900 via-slate-900 to-black text-slate-300 border-t border-white/10 backdrop-blur-xl">
         <div className="container py-16">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div className="col-span-1 md:col-span-1 space-y-4">
@@ -82,16 +91,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 Empowering individuals worldwide to commit to sustainable action. Join the movement for a better tomorrow.
               </p>
               <div className="flex space-x-4 pt-4">
-                <a href="#" className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-green-600 hover:text-white transition-colors">
+                <a href="#" className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-emerald-500/50">
                   <Twitter className="h-4 w-4" />
                 </a>
-                <a href="#" className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors">
+                <a href="#" className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-blue-500/50">
                   <Linkedin className="h-4 w-4" />
                 </a>
-                <a href="#" className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-pink-600 hover:text-white transition-colors">
+                <a href="#" className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-pink-500 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-pink-500/50">
                   <Instagram className="h-4 w-4" />
                 </a>
-                <a href="#" className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-blue-800 hover:text-white transition-colors">
+                <a href="#" className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-blue-600/50">
                   <Facebook className="h-4 w-4" />
                 </a>
               </div>
@@ -138,7 +147,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400">
             <p>&copy; {new Date().getFullYear()} Global Pledge Initiative. All rights reserved.</p>
             <div className="flex gap-6">
               <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>

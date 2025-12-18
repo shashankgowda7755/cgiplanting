@@ -50,68 +50,96 @@ const featuredPledges = [
 export default function Home() {
   return (
     <div className="space-y-20 pb-16">
-      {/* Hero Section - MyGov Style */}
-      <section className="relative h-[600px] flex items-center justify-center overflow-hidden bg-gradient-to-b from-green-700 to-green-600 text-white">
+      {/* Hero Section - Modern & Premium */}
+      <section className="relative h-[700px] flex items-center justify-center overflow-hidden bg-gradient-to-br from-emerald-600 via-green-600 to-teal-700 text-white">
         <div className="absolute inset-0">
-          <img src={forestImage} alt="Hero" className="w-full h-full object-cover opacity-40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-green-700 via-green-700/80 to-green-600/60"></div>
+          <img src={forestImage} alt="Hero" className="w-full h-full object-cover opacity-30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/80 via-emerald-700/70 to-transparent"></div>
+          <div className="absolute inset-0 backdrop-blur-[2px]"></div>
         </div>
         
         <div className="container relative z-10 mx-auto text-center max-w-5xl px-6">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="space-y-8"
           >
-            <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-white/15 border border-white/30 text-sm backdrop-blur-md shadow-lg">
-              <CheckCircle className="w-4 h-4 text-yellow-300" />
-              <span className="font-semibold tracking-wide">1.24M+ Pledges Made Worldwide</span>
-            </div>
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="inline-flex items-center gap-3 px-7 py-3 rounded-full bg-white/20 border border-white/40 text-sm backdrop-blur-xl shadow-2xl hover:bg-white/25 transition-all"
+            >
+              <CheckCircle className="w-5 h-5 text-amber-300 animate-pulse" />
+              <span className="font-bold tracking-wide text-white">1.24M+ Pledges Made Worldwide</span>
+            </motion.div>
             
-            <h1 className="text-6xl md:text-7xl font-bold tracking-tight leading-tight drop-shadow-xl">
-              Make Your Pledge<br />
-              <span className="text-yellow-300">For a Better Tomorrow</span>
-            </h1>
+            <motion.h1 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="text-7xl md:text-8xl font-black tracking-tighter leading-tight drop-shadow-2xl font-serif"
+            >
+              Make Your<br />
+              <span className="bg-gradient-to-r from-amber-200 via-yellow-200 to-amber-100 bg-clip-text text-transparent">Pledge Today</span>
+            </motion.h1>
             
-            <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed font-light">
-              Join millions of people worldwide committing to the UN Sustainable Development Goals. Take the pledge, get your certificate, and inspire others.
-            </p>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="text-xl md:text-2xl text-white/95 max-w-3xl mx-auto leading-relaxed font-light"
+            >
+              Join millions committing to the UN Sustainable Development Goals. Get your certificate, inspire others, and drive real change.
+            </motion.p>
             
-            <Button asChild size="lg" className="text-lg px-12 h-14 rounded-full bg-yellow-400 hover:bg-yellow-500 text-green-900 font-bold shadow-2xl hover:shadow-yellow-400/50 transition-all hover:scale-105">
-              <Link href="/pledge">Take the Pledge</Link>
-            </Button>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <Button asChild size="lg" className="text-lg px-10 h-16 rounded-full bg-gradient-to-r from-amber-300 to-yellow-300 hover:from-amber-400 hover:to-yellow-400 text-emerald-900 font-black shadow-2xl shadow-yellow-400/40 hover:shadow-yellow-400/60 transition-all hover:scale-110 hover:-translate-y-1">
+                <Link href="/pledge" data-testid="button-take-pledge">Take the Pledge Now</Link>
+              </Button>
+            </motion.div>
           </motion.div>
         </div>
       </section>
 
       {/* Featured Pledges Section */}
-      <section className="container mx-auto px-6">
-        <div className="mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Featured Pledge Categories</h2>
-          <p className="text-lg text-slate-600 max-w-2xl">Choose a cause that matters to you and join thousands making a real difference</p>
-        </div>
+      <section className="container mx-auto px-6 py-20">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-16"
+        >
+          <h2 className="text-5xl md:text-6xl font-black text-slate-900 mb-6 font-serif">Featured Causes</h2>
+          <p className="text-xl text-slate-600 max-w-3xl leading-relaxed">Choose a cause that matters to you and join thousands making a measurable, real difference in the world</p>
+        </motion.div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           {featuredPledges.map((pledge, i) => (
             <motion.div
               key={pledge.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              whileHover={{ y: -8 }}
+              transition={{ delay: i * 0.15 }}
+              whileHover={{ y: -12 }}
+              className="group"
             >
               <Link href={`/pledge?goal=${pledge.goalId}`}>
-                <Card className="overflow-hidden border-none shadow-lg hover:shadow-2xl transition-all cursor-pointer h-full">
-                  <div className="relative h-56 overflow-hidden bg-slate-200">
-                    <img src={pledge.image} alt={pledge.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
-                    <div className={`absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent`}></div>
+                <Card className="overflow-hidden border-0 shadow-2xl hover:shadow-3xl transition-all cursor-pointer h-full bg-white backdrop-blur-xl">
+                  <div className="relative h-72 overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300">
+                    <img src={pledge.image} alt={pledge.title} className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-500 blur-sm" />
+                    <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10 group-hover:from-black/70 transition-all`}></div>
                   </div>
-                  <CardContent className="p-8">
-                    <h3 className="text-2xl font-bold text-slate-900 mb-3">{pledge.title}</h3>
-                    <p className="text-slate-600 mb-6 leading-relaxed">{pledge.description}</p>
-                    <Button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg">
+                  <CardContent className="p-8 space-y-4">
+                    <h3 className="text-3xl font-black text-slate-900 group-hover:text-emerald-600 transition-colors font-serif">{pledge.title}</h3>
+                    <p className="text-slate-700 leading-relaxed text-lg">{pledge.description}</p>
+                    <Button className="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold rounded-lg h-12 shadow-lg hover:shadow-xl transition-all">
                       Start Pledge
                     </Button>
                   </CardContent>
@@ -123,27 +151,28 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className="bg-slate-50 py-16 rounded-2xl">
+      <section className="bg-gradient-to-r from-white via-emerald-50/30 to-white py-24">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { icon: Users, label: "Global Citizens", value: "1.2M+", color: "text-green-600", bg: "bg-green-100" },
-              { icon: Globe, label: "Countries Represented", value: "193", color: "text-blue-600", bg: "bg-blue-100" },
-              { icon: Award, label: "Sustainable Goals", value: "17", color: "text-yellow-600", bg: "bg-yellow-100" }
+              { icon: Users, label: "Global Citizens", value: "1.2M+", color: "text-emerald-600", bg: "bg-gradient-to-br from-emerald-100 to-green-100", glow: "shadow-emerald-500/20" },
+              { icon: Globe, label: "Countries Represented", value: "193", color: "text-blue-600", bg: "bg-gradient-to-br from-blue-100 to-cyan-100", glow: "shadow-blue-500/20" },
+              { icon: Award, label: "Sustainable Goals", value: "17", color: "text-amber-600", bg: "bg-gradient-to-br from-amber-100 to-yellow-100", glow: "shadow-amber-500/20" }
             ].map((stat, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.85 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: i * 0.15, type: "spring" }}
+                whileHover={{ scale: 1.05 }}
                 className="text-center"
               >
-                <div className={`w-20 h-20 ${stat.bg} ${stat.color} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-md`}>
-                  <stat.icon className="w-10 h-10" />
+                <div className={`w-28 h-28 ${stat.bg} ${stat.color} rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl ${stat.glow} backdrop-blur-xl border border-white/50`}>
+                  <stat.icon className="w-14 h-14" />
                 </div>
-                <h3 className="text-5xl font-bold text-slate-900 mb-2">{stat.value}</h3>
-                <p className="text-slate-600 font-semibold uppercase tracking-wider text-sm">{stat.label}</p>
+                <h3 className="text-6xl font-black text-slate-900 mb-3 font-serif">{stat.value}</h3>
+                <p className="text-slate-600 font-bold uppercase tracking-wider text-sm">{stat.label}</p>
               </motion.div>
             ))}
           </div>
@@ -151,41 +180,46 @@ export default function Home() {
       </section>
 
       {/* All Goals Grid */}
-      <section className="container mx-auto px-6 py-16">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+      <section className="container mx-auto px-6 py-20">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6"
+        >
           <div>
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">All 17 Sustainable Goals</h2>
-            <p className="text-lg text-slate-600 max-w-2xl">Select any goal to start your official pledge and join the global movement</p>
+            <h2 className="text-5xl md:text-6xl font-black text-slate-900 mb-4 font-serif">All 17 Goals</h2>
+            <p className="text-lg text-slate-600 max-w-3xl leading-relaxed">Pick a Sustainable Development Goal and join the global movement for positive change</p>
           </div>
-          <Button className="gap-2 rounded-full px-8 bg-green-600 hover:bg-green-700" asChild>
-            <Link href="/pledge">View All <ArrowRight className="w-4 h-4" /></Link>
+          <Button className="gap-2 rounded-full px-8 h-12 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold shadow-lg hover:shadow-xl transition-all" asChild>
+            <Link href="/pledge">View All <ArrowRight className="w-5 h-5" /></Link>
           </Button>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {SDGs.slice(0, 12).map((goal, i) => {
             const Icon = GoalIcons[goal.id] || Globe;
             return (
-              <Link key={goal.id} href={`/pledge?goal=${goal.id}`}>
+              <Link key={goal.id} href={`/pledge?goal=${goal.id}`} data-testid={`link-goal-${goal.id}`}>
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.85 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.05 }}
-                  whileHover={{ y: -8, scale: 1.05 }}
-                  className="cursor-pointer group relative aspect-square rounded-2xl p-4 flex flex-col justify-between transition-all shadow-lg hover:shadow-xl overflow-hidden border border-white/20"
+                  transition={{ delay: i * 0.06, type: "spring", stiffness: 150 }}
+                  whileHover={{ y: -12, scale: 1.08 }}
+                  className="cursor-pointer group relative aspect-square rounded-3xl p-5 flex flex-col justify-between transition-all shadow-xl hover:shadow-2xl overflow-hidden border border-white/40 backdrop-blur-sm"
                   style={{ backgroundColor: goal.color }}
                 >
-                  <div className="absolute -right-6 -bottom-6 opacity-5 transform rotate-12 scale-150 transition-transform group-hover:scale-125 group-hover:rotate-0">
-                     <Icon className="w-40 h-40 text-white" />
+                  <div className="absolute -right-8 -bottom-8 opacity-10 transform rotate-12 scale-150 transition-all group-hover:scale-140 group-hover:rotate-3">
+                     <Icon className="w-44 h-44 text-white" />
                   </div>
                   
                   <div className="flex justify-between items-start relative z-10">
-                    <span className="text-white font-bold text-3xl drop-shadow-sm">{goal.id}</span>
-                    <Icon className="text-white/70 w-7 h-7 group-hover:text-white/90 transition-colors" />
+                    <span className="text-white font-black text-4xl drop-shadow-lg">{goal.id}</span>
+                    <Icon className="text-white/80 w-8 h-8 group-hover:text-white/100 transition-all group-hover:scale-125" />
                   </div>
                   
-                  <span className="text-white font-bold text-sm leading-tight relative z-10 group-hover:underline decoration-2 underline-offset-3">{goal.title}</span>
+                  <span className="text-white font-bold text-sm leading-tight relative z-10 group-hover:underline decoration-white decoration-2 underline-offset-4 transition-all">{goal.title}</span>
                 </motion.div>
               </Link>
             );
