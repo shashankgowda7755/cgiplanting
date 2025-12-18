@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -94,6 +94,10 @@ export default function Pledge() {
   const { toast } = useToast();
   const { data: goals, isLoading } = useGoals();
   const SDGs = goals || [];
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
 
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -300,8 +304,9 @@ export default function Pledge() {
   return (
     <div className="container mx-auto px-6 py-12 max-w-4xl">
       <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
         className="mb-12 bg-gradient-to-r from-white/40 to-emerald-50/40 backdrop-blur-xl rounded-2xl p-8 border border-white/30 shadow-lg"
       >
         <h1 className="text-5xl font-black font-serif text-slate-900 mb-6">Take the Pledge</h1>
@@ -330,12 +335,13 @@ export default function Pledge() {
 
       {step === 4 ? (
         <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, y: -20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.5 }}
           className="flex flex-col items-center"
         >
           <motion.div 
-            initial={{ y: -10 }}
+            initial={{ y: -15 }}
             animate={{ y: 0 }}
             transition={{ delay: 0.2, type: "spring" }}
             className="bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 px-8 py-6 rounded-2xl mb-8 text-center w-full border border-emerald-200 shadow-lg"
@@ -455,9 +461,9 @@ export default function Pledge() {
               {step === 1 && (
                 <motion.div
                   key="step1"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: -20, y: -20 }}
+                  animate={{ opacity: 1, x: 0, y: 0 }}
+                  exit={{ opacity: 0, x: -20, y: 20 }}
                 >
                   <FormField
                     control={form.control}
@@ -505,9 +511,9 @@ export default function Pledge() {
               {step === 2 && (
                 <motion.div
                   key="step2"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: -20, y: -20 }}
+                  animate={{ opacity: 1, x: 0, y: 0 }}
+                  exit={{ opacity: 0, x: -20, y: 20 }}
                   className="space-y-6 max-w-lg mx-auto"
                 >
                   <div className="flex flex-col items-center mb-6">
@@ -627,9 +633,9 @@ export default function Pledge() {
               {step === 3 && (
                 <motion.div
                   key="step3"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: -20, y: -20 }}
+                  animate={{ opacity: 1, x: 0, y: 0 }}
+                  exit={{ opacity: 0, x: -20, y: 20 }}
                   className="flex flex-col items-center max-w-2xl mx-auto"
                 >
                   <h3 className="text-xl font-bold mb-6">Review Your Pledge</h3>

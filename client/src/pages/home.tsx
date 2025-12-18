@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 import { ArrowRight, Globe, Users, Award, Wallet, Utensils, Heart, GraduationCap, Droplets, Zap, Briefcase, Factory, Equal, Building2, Recycle, ThermometerSun, Fish, TreePine, Shield, Handshake, CheckCircle } from "lucide-react";
 import handsImage from '@assets/generated_images/hands_together_community_unity.png';
 import forestImage from '@assets/generated_images/lush_green_forest_canopy.png';
@@ -51,6 +52,10 @@ export default function Home() {
   const { data: goals, isLoading } = useGoals();
   const SDGs = goals || [];
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
+
   if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
@@ -67,7 +72,7 @@ export default function Home() {
         
         <div className="container relative z-10 mx-auto text-center max-w-5xl px-6">
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: -40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="space-y-8"
@@ -117,7 +122,7 @@ export default function Home() {
       {/* Featured Pledges Section */}
       <section className="container mx-auto px-6 py-20">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="mb-16"
@@ -130,11 +135,11 @@ export default function Home() {
           {featuredPledges.map((pledge, i) => (
             <motion.div
               key={pledge.id}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: -30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.15 }}
-              whileHover={{ y: -12 }}
+              whileHover={{ y: 12 }}
               className="group"
             >
               <Link href={`/pledge?goal=${pledge.goalId}`}>
@@ -168,8 +173,8 @@ export default function Home() {
             ].map((stat, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, scale: 0.85 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: -20, scale: 0.85 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15, type: "spring" }}
                 whileHover={{ scale: 1.05 }}
@@ -189,8 +194,8 @@ export default function Home() {
       {/* All Goals Grid */}
       <section className="container mx-auto px-6 py-20">
         <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, y: -20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6"
         >
@@ -209,11 +214,11 @@ export default function Home() {
             return (
               <Link key={goal.goalId} href={`/pledge?goal=${goal.goalId}`} data-testid={`link-goal-${goal.goalId}`}>
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.85 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, y: -20, scale: 0.85 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.06, type: "spring", stiffness: 150 }}
-                  whileHover={{ y: -12, scale: 1.08 }}
+                  whileHover={{ y: 12, scale: 1.08 }}
                   className="cursor-pointer group relative aspect-square rounded-3xl p-5 flex flex-col justify-between transition-all shadow-xl hover:shadow-2xl overflow-hidden border border-white/40 backdrop-blur-sm"
                   style={{ backgroundColor: goal.color }}
                 >
