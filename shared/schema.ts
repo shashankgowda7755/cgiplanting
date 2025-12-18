@@ -10,6 +10,9 @@ export const goals = pgTable("goals", {
   color: text("color").notNull(), // Tailwind classes or hex
   goalId: integer("goal_id").notNull().unique(), // The 1-17 number
   featured: boolean("featured").default(false),
+  impactMetric: text("impact_metric"), // e.g., "meals provided", "trees planted"
+  impactValue: text("impact_value"), // e.g., "10", "1000"
+  impactDescription: text("impact_description"), // e.g., "Each pledge helps provide 10 meals to families in need"
 });
 
 export const pledges = pgTable("pledges", {

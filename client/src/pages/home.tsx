@@ -174,7 +174,7 @@ export default function Home() {
       </section>
 
       {/* Global Metrics Section */}
-      <section className="bg-gradient-to-r from-white via-emerald-50/30 to-white py-24">
+      <section id="impact" className="bg-gradient-to-r from-white via-emerald-50/30 to-white py-24">
         <div className="container mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -186,7 +186,7 @@ export default function Home() {
             <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">See the measurable impact of our pledges across the world</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
             {[
               { icon: Users, label: "Global Citizens", value: "1.2M+", color: "text-emerald-600", bg: "bg-gradient-to-br from-emerald-100 to-green-100", glow: "shadow-emerald-500/20" },
               { icon: Globe, label: "Countries Represented", value: "193", color: "text-blue-600", bg: "bg-gradient-to-br from-blue-100 to-cyan-100", glow: "shadow-blue-500/20" },
@@ -208,6 +208,48 @@ export default function Home() {
                 <p className="text-slate-600 font-bold uppercase tracking-wider text-sm">{stat.label}</p>
               </motion.div>
             ))}
+          </div>
+
+          {/* Impact Metrics by Goal */}
+          <div className="mt-20 pt-12 border-t border-slate-200">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-12"
+            >
+              <h3 className="text-4xl font-black text-slate-900 mb-3 font-serif">Impact Per Pledge</h3>
+              <p className="text-lg text-slate-600">See what happens when one person takes action</p>
+            </motion.div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {SDGs.map((goal, i) => {
+                const Icon = GoalIcons[goal.goalId] || Globe;
+                if (!goal.impactMetric) return null;
+                return (
+                  <motion.div
+                    key={goal.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.05 }}
+                    className="rounded-xl p-6 backdrop-blur-xl border border-white/50 shadow-lg hover:shadow-xl transition-all"
+                    style={{ backgroundColor: goal.color + "15" }}
+                  >
+                    <div className="flex items-start gap-4 mb-4">
+                      <div className="rounded-lg p-3 flex-shrink-0" style={{ backgroundColor: goal.color }}>
+                        <Icon className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-black text-slate-900 text-lg">{goal.title}</h4>
+                        <p className="text-sm text-slate-600 mt-1">{goal.impactValue} {goal.impactMetric}</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-slate-700 leading-relaxed">{goal.impactDescription}</p>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
