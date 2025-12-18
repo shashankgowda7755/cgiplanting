@@ -3,7 +3,8 @@ import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { SDGs, Goal } from "@/lib/goals";
+import { useGoals, Goal } from "@/lib/goals";
+import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -62,7 +63,7 @@ const formSchema = z.object({
   story: z.string().optional(),
   city: z.string().min(2, "City is required"),
   country: z.string().min(2, "Country is required"),
-  photo: z.any().optional(),
+  photoUrl: z.string().optional(),
 });
 
 // Icon mapping for SDGs
@@ -91,6 +92,8 @@ export default function Pledge() {
   const searchParams = new URLSearchParams(window.location.search);
   const initialGoalId = searchParams.get("goal") || "";
   const { toast } = useToast();
+  const { data: goals, isLoading } = useGoals();
+  const SDGs = goals || [];
 
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -99,7 +102,7 @@ export default function Pledge() {
   const certificateRef = useRef<HTMLDivElement>(null);
 
   // Auto-advance if goal is present in URL
-  if (initialGoalId && step === 1) {
+  if (initialGoalId && step === 1 && !isLoading) {
     setStep(2);
   }
 
@@ -112,12 +115,12 @@ export default function Pledge() {
       story: "",
       city: "",
       country: "",
-      photo: undefined,
+      photoUrl: undefined,
     },
   });
 
   const selectedGoalId = form.watch("goalId");
-  const selectedGoal = SDGs.find((g) => g.id.toString() === selectedGoalId);
+  const selectedGoal = SDGs.find((g) => g.goalId.toString() === selectedGoalId);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -130,9 +133,13 @@ export default function Pledge() {
         });
         return;
       }
-      const url = URL.createObjectURL(file);
-      setPhotoUrl(url);
-      form.setValue("photo", file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setPhotoUrl(base64);
+        form.setValue("photoUrl", base64);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -143,9 +150,22 @@ export default function Pledge() {
     }
 
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setStep(4);
-    setIsSubmitting(false);
+    try {
+      await apiRequest("POST", "/api/pledges", {
+        ...values,
+        goalId: parseInt(values.goalId),
+      });
+      setStep(4);
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: "Failed to submit pledge. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const downloadCertificate = async () => {
@@ -446,27 +466,27 @@ export default function Pledge() {
                       <FormItem className="space-y-0">
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                           {SDGs.map((goal) => {
-                            const Icon = GoalIcons[goal.id] || Globe;
+                            const Icon = GoalIcons[goal.goalId] || Globe;
                             return (
                               <div
-                                key={goal.id}
+                                key={goal.goalId}
                                 onClick={() => {
-                                  field.onChange(goal.id.toString());
+                                  field.onChange(goal.goalId.toString());
                                   setStep(2);
                                 }}
                                 className={`cursor-pointer aspect-square rounded-xl p-4 flex flex-col justify-between transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-                                  field.value === goal.id.toString() 
+                                  field.value === goal.goalId.toString() 
                                     ? "ring-4 ring-offset-2 ring-primary scale-105 shadow-xl" 
                                     : "shadow-sm opacity-90 hover:opacity-100"
                                 }`}
                                 style={{ backgroundColor: goal.color }}
                               >
                                 <div className="flex justify-between items-start">
-                                  <span className="text-white/90 font-bold text-2xl font-serif">{goal.id}</span>
+                                  <span className="text-white/90 font-bold text-2xl font-serif">{goal.goalId}</span>
                                   <Icon className="text-white/40 w-8 h-8" />
                                 </div>
                                 <span className="text-white font-bold text-sm leading-tight">{goal.title}</span>
-                                {field.value === goal.id.toString() && (
+                                {field.value === goal.goalId.toString() && (
                                   <div className="absolute top-2 right-2 bg-white rounded-full p-1 text-primary shadow-sm">
                                     <Check className="w-4 h-4" />
                                   </div>

@@ -1,4 +1,4 @@
-import { SDGs } from "@/lib/goals";
+import { useGoals } from "@/lib/goals";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
@@ -48,6 +48,13 @@ const featuredPledges = [
 ];
 
 export default function Home() {
+  const { data: goals, isLoading } = useGoals();
+  const SDGs = goals || [];
+
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
   return (
     <div className="space-y-20 pb-16">
       {/* Hero Section - Modern & Premium */}
@@ -198,9 +205,9 @@ export default function Home() {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {SDGs.slice(0, 12).map((goal, i) => {
-            const Icon = GoalIcons[goal.id] || Globe;
+            const Icon = GoalIcons[goal.goalId] || Globe;
             return (
-              <Link key={goal.id} href={`/pledge?goal=${goal.id}`} data-testid={`link-goal-${goal.id}`}>
+              <Link key={goal.goalId} href={`/pledge?goal=${goal.goalId}`} data-testid={`link-goal-${goal.goalId}`}>
                 <motion.div
                   initial={{ opacity: 0, scale: 0.85 }}
                   whileInView={{ opacity: 1, scale: 1 }}
@@ -215,7 +222,7 @@ export default function Home() {
                   </div>
                   
                   <div className="flex justify-between items-start relative z-10">
-                    <span className="text-white font-black text-4xl drop-shadow-lg">{goal.id}</span>
+                    <span className="text-white font-black text-4xl drop-shadow-lg">{goal.goalId}</span>
                     <Icon className="text-white/80 w-8 h-8 group-hover:text-white/100 transition-all group-hover:scale-125" />
                   </div>
                   
