@@ -151,7 +151,7 @@ export default function Home() {
                   <CardContent className="p-8 space-y-4">
                     <h3 className="text-3xl font-black text-slate-900 group-hover:text-emerald-600 transition-colors font-serif">{pledge.title}</h3>
                     <p className="text-slate-700 leading-relaxed text-lg">{pledge.description}</p>
-                    <Button className="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold rounded-lg h-12 shadow-lg hover:shadow-xl transition-all">
+                    <Button className="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold rounded-lg h-12 shadow-lg hover:shadow-xl transition-all" data-testid="button-start-pledge">
                       Start Pledge
                     </Button>
                   </CardContent>
@@ -164,9 +164,9 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="flex justify-center mt-12"
+            className="col-span-full flex justify-center mt-12"
           >
-            <Button asChild size="lg" className="px-12 h-14 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-black text-lg rounded-full shadow-xl hover:shadow-2xl transition-all hover:scale-105">
+            <Button asChild size="lg" className="px-12 h-14 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-black text-lg rounded-full shadow-xl hover:shadow-2xl transition-all hover:scale-105" data-testid="button-view-more-goals">
               <Link href="/pledge">View More Goals <ArrowRight className="w-5 h-5 ml-2" /></Link>
             </Button>
           </motion.div>

@@ -688,16 +688,16 @@ export default function Pledge() {
               )}
             </AnimatePresence>
 
-            <div className="flex justify-between pt-8 border-t">
+            <div className="flex justify-between pt-8 border-t gap-4">
               {step > 1 ? (
-                <Button type="button" variant="outline" onClick={() => setStep(step - 1)}>
+                <Button type="button" variant="outline" onClick={() => setStep(step - 1)} data-testid="button-back" className="hover:bg-slate-100">
                   <ChevronLeft className="w-4 h-4 mr-2" /> Back
                 </Button>
               ) : (
                 <div></div>
               )}
               
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" disabled={isSubmitting} data-testid="button-next" className="bg-blue-600 hover:bg-blue-700 text-white">
                 {isSubmitting ? (
                   "Generating..." 
                 ) : step === 3 ? (
