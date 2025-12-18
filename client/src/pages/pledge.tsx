@@ -171,7 +171,6 @@ export default function Pledge() {
         story: values.story || "",
         city: values.city,
         country: values.country,
-        photoUrl: values.photoUrl || null,
       };
       
       console.log("Submitting pledge:", pledgeData);

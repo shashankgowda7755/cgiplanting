@@ -35,7 +35,6 @@ export const insertPledgeSchema = createInsertSchema(pledges).pick({
   story: true,
   city: true,
   country: true,
-  photoUrl: true,
 });
 
 export type InsertPledge = z.infer<typeof insertPledgeSchema>;

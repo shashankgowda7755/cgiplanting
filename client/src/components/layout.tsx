@@ -29,6 +29,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </Link>
 
+          {/* Mobile Pledge Button */}
+          <Link href="/pledge" className="md:hidden px-5 py-2 rounded-full bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-105 font-bold text-sm transition-all duration-300">
+            Pledge
+          </Link>
+
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center space-x-8 text-sm font-semibold">
             <Link href="/" className="text-slate-700 hover:text-emerald-600 transition-colors duration-200 relative group">
