@@ -163,27 +163,67 @@ export default function Pledge() {
     if (certificateRef.current && !isDownloading) {
       setIsDownloading(true);
       try {
-        // Small delay to ensure rendering
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Wait for all content to render
+        await new Promise(resolve => setTimeout(resolve, 1000));
         
-        const dataUrl = await toPng(certificateRef.current, { 
-          cacheBust: true, 
-          pixelRatio: 2,
-          skipAutoScale: true,
-          style: { transform: 'scale(1)' } // Ensure no transform issues
-        });
+        const element = certificateRef.current;
         
-        const link = document.createElement("a");
-        link.download = `pledge-certificate-${selectedGoal?.id}.png`;
-        link.href = dataUrl;
-        link.click();
+        // Clone the element to ensure clean rendering
+        const clone = element.cloneNode(true) as HTMLElement;
+        clone.style.position = 'absolute';
+        clone.style.left = '-9999px';
+        clone.style.top = '-9999px';
+        document.body.appendChild(clone);
+        
+        try {
+          const dataUrl = await toPng(clone, { 
+            cacheBust: true, 
+            pixelRatio: 2
+          });
+          
+          const link = document.createElement("a");
+          link.download = `pledge-certificate-${selectedGoal?.id || 'official'}-${Date.now()}.png`;
+          link.href = dataUrl;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          toast({
+            title: "Success",
+            description: "Certificate downloaded successfully!",
+          });
+        } finally {
+          document.body.removeChild(clone);
+        }
       } catch (err) {
-        console.error("Failed to generate image", err);
-        toast({
-           title: "Download failed",
-           description: "Could not generate certificate image. Please try again.",
-           variant: "destructive"
-        });
+        console.error("Failed to generate image:", err);
+        
+        // Fallback: Try direct screenshot approach
+        try {
+          if (certificateRef.current) {
+            const canvas = await toPng(certificateRef.current, { 
+              cacheBust: true,
+              backgroundColor: '#ffffff',
+              pixelRatio: 1
+            });
+            const link = document.createElement("a");
+            link.download = `pledge-certificate-${selectedGoal?.id || 'official'}-${Date.now()}.png`;
+            link.href = canvas;
+            link.click();
+            
+            toast({
+              title: "Success",
+              description: "Certificate downloaded successfully!",
+            });
+          }
+        } catch (fallbackErr) {
+          console.error("Fallback also failed:", fallbackErr);
+          toast({
+            title: "Download failed",
+            description: "Could not generate certificate. Try refreshing and try again.",
+            variant: "destructive"
+          });
+        }
       } finally {
         setIsDownloading(false);
       }
