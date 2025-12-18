@@ -164,8 +164,8 @@ export default function Pledge() {
       setIsDownloading(true);
       try {
         const canvas = document.createElement('canvas');
-        canvas.width = 1200;
-        canvas.height = 1600;
+        canvas.width = 1080;
+        canvas.height = 1440;
         const ctx = canvas.getContext('2d');
         if (!ctx) throw new Error('Could not get canvas context');
 
@@ -183,7 +183,17 @@ export default function Pledge() {
         // Draw template
         ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
-        // Draw circular photo at correct position (center-left of template)
+        // Cover the original black & white photo with white circle
+        const circleX = 335;
+        const circleY = 440;
+        const circleRadius = 155;
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Draw user's photo in the circular frame
         if (photoUrl) {
           const photoImg = new Image();
           photoImg.crossOrigin = "anonymous";
@@ -195,36 +205,36 @@ export default function Pledge() {
             setTimeout(reject, 5000);
           });
 
-          // Circular crop positioned where the circular frame is
-          const circleX = canvas.width * 0.25;
-          const circleY = canvas.height * 0.35;
-          const circleRadius = 120;
-
+          // Clip and draw photo in circle
           ctx.save();
           ctx.beginPath();
           ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2);
           ctx.clip();
           ctx.drawImage(photoImg, circleX - circleRadius, circleY - circleRadius, circleRadius * 2, circleRadius * 2);
           ctx.restore();
-
-          // Add circular border
-          ctx.strokeStyle = '#E63946';
-          ctx.lineWidth = 8;
-          ctx.beginPath();
-          ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2);
-          ctx.stroke();
         }
 
-        // Draw user's name where "HAFIZ KHAN" is positioned
+        // Draw circular border (yellow/gold)
+        ctx.strokeStyle = '#FFD700';
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Draw user's name where "HAFIZ KHAN" is positioned (right side in yellow box)
         const name = form.getValues("fullName") || "YOUR NAME";
-        ctx.font = 'bold 68px Arial, sans-serif';
+        
+        // Yellow background box for name
+        ctx.fillStyle = '#FFD700';
+        ctx.font = 'bold 56px Arial, sans-serif';
+        const nameWidth = ctx.measureText(name).width + 40;
+        ctx.fillRect(700, 350, nameWidth + 40, 120);
+        
+        // White text
         ctx.fillStyle = '#FFFFFF';
-        ctx.textAlign = 'right';
-        ctx.shadowColor = 'rgba(0,0,0,0.3)';
-        ctx.shadowBlur = 4;
-        ctx.shadowOffsetX = 2;
-        ctx.shadowOffsetY = 2;
-        ctx.fillText(name, canvas.width - 80, canvas.height * 0.35);
+        ctx.font = 'bold 56px Arial, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(name, 730, 410);
 
         // Convert to blob and download
         canvas.toBlob((blob) => {
