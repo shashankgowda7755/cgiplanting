@@ -233,13 +233,14 @@ export default function Pledge() {
         ctx.shadowOffsetX = 3;
         ctx.shadowOffsetY = 3;
         
-        // Split name if too long
+        // Split name if too long - positioned on the right side
+        const nameX = 1240;
         const nameParts = name.split(' ');
         if (nameParts.length > 1) {
-          ctx.fillText(nameParts[0], 1000, 550);
-          ctx.fillText(nameParts.slice(1).join(' '), 1000, 680);
+          ctx.fillText(nameParts[0], nameX, 580);
+          ctx.fillText(nameParts.slice(1).join(' '), nameX, 710);
         } else {
-          ctx.fillText(name, 1000, 615);
+          ctx.fillText(name, nameX, 645);
         }
 
         // Convert to blob and download
@@ -372,8 +373,14 @@ export default function Pledge() {
             )}
             
             {/* User name overlay */}
-            <div className="absolute z-20" style={{ right: '12%', top: '33%', transform: 'translateY(-50%)' }}>
-              <div className="text-white text-5xl font-bold text-center leading-tight" style={{ textShadow: '3px 3px 6px rgba(0,0,0,0.5)', maxWidth: '300px' }}>
+            <div className="absolute z-20" style={{ right: '8%', top: '35%', transform: 'translateY(-50%)' }}>
+              <div className="text-white font-bold leading-tight" style={{ 
+                fontSize: '3.5rem',
+                textShadow: '3px 3px 6px rgba(0,0,0,0.5)', 
+                maxWidth: '280px',
+                lineHeight: '1.1',
+                letterSpacing: '0.05em'
+              }}>
                 {form.getValues("fullName") ? form.getValues("fullName").toUpperCase() : "YOUR NAME"}
               </div>
             </div>
