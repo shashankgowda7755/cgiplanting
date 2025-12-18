@@ -159,110 +159,17 @@ export default function Home() {
               </Link>
             </motion.div>
           ))}
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="bg-gradient-to-r from-white via-emerald-50/30 to-white py-24">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { icon: Users, label: "Global Citizens", value: "1.2M+", color: "text-emerald-600", bg: "bg-gradient-to-br from-emerald-100 to-green-100", glow: "shadow-emerald-500/20" },
-              { icon: Globe, label: "Countries Represented", value: "193", color: "text-blue-600", bg: "bg-gradient-to-br from-blue-100 to-cyan-100", glow: "shadow-blue-500/20" },
-              { icon: Award, label: "Sustainable Goals", value: "17", color: "text-amber-600", bg: "bg-gradient-to-br from-amber-100 to-yellow-100", glow: "shadow-amber-500/20" }
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: -20, scale: 0.85 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15, type: "spring" }}
-                whileHover={{ scale: 1.05 }}
-                className="text-center"
-              >
-                <div className={`w-28 h-28 ${stat.bg} ${stat.color} rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl ${stat.glow} backdrop-blur-xl border border-white/50`}>
-                  <stat.icon className="w-14 h-14" />
-                </div>
-                <h3 className="text-6xl font-black text-slate-900 mb-3 font-serif">{stat.value}</h3>
-                <p className="text-slate-600 font-bold uppercase tracking-wider text-sm">{stat.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* All Goals Grid */}
-      <section className="container mx-auto px-6 py-20">
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6"
-        >
-          <div>
-            <h2 className="text-5xl md:text-6xl font-black text-slate-900 mb-4 font-serif">All 17 Goals</h2>
-            <p className="text-lg text-slate-600 max-w-3xl leading-relaxed">Pick a Sustainable Development Goal and join the global movement for positive change</p>
-          </div>
-          <Button className="gap-2 rounded-full px-8 h-12 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold shadow-lg hover:shadow-xl transition-all" asChild>
-            <Link href="/pledge">View All <ArrowRight className="w-5 h-5" /></Link>
-          </Button>
-        </motion.div>
-
-        <div className="bg-gradient-to-r from-emerald-50 via-green-50 to-teal-50 rounded-3xl p-12 mb-12 border border-emerald-200/50">
-          <h3 className="text-3xl font-black text-slate-900 mb-8 font-serif">Global Pledge Statistics</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { goal: "Climate Action", count: "245,127", color: "from-green-500 to-emerald-600" },
-              { goal: "Gender Equality", count: "189,543", color: "from-pink-500 to-rose-600" },
-              { goal: "Quality Education", count: "156,892", color: "from-red-500 to-orange-600" },
-              { goal: "Good Health & Well-being", count: "143,256", color: "from-green-600 to-teal-600" },
-              { goal: "Clean Water & Sanitation", count: "112,847", color: "from-blue-500 to-cyan-600" },
-              { goal: "Decent Work & Economic Growth", count: "98,734", color: "from-purple-500 to-indigo-600" },
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className={`bg-gradient-to-br ${stat.color} text-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all`}
-              >
-                <h4 className="text-lg font-bold mb-2">{stat.goal}</h4>
-                <p className="text-4xl font-black font-serif">{stat.count}</p>
-                <p className="text-white/70 text-sm mt-2">pledges made</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {SDGs.slice(0, 12).map((goal, i) => {
-            const Icon = GoalIcons[goal.goalId] || Globe;
-            return (
-              <Link key={goal.goalId} href={`/pledge?goal=${goal.goalId}`} data-testid={`link-goal-${goal.goalId}`}>
-                <motion.div
-                  initial={{ opacity: 0, y: -20, scale: 0.85 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.06, type: "spring", stiffness: 150 }}
-                  whileHover={{ y: 12, scale: 1.08 }}
-                  className="cursor-pointer group relative aspect-square rounded-3xl p-5 flex flex-col justify-between transition-all shadow-xl hover:shadow-2xl overflow-hidden border border-white/40 backdrop-blur-sm"
-                  style={{ backgroundColor: goal.color }}
-                >
-                  <div className="absolute -right-8 -bottom-8 opacity-10 transform rotate-12 scale-150 transition-all group-hover:scale-140 group-hover:rotate-3">
-                     <Icon className="w-44 h-44 text-white" />
-                  </div>
-                  
-                  <div className="flex justify-between items-start relative z-10">
-                    <span className="text-white font-black text-4xl drop-shadow-lg">{goal.goalId}</span>
-                    <Icon className="text-white/80 w-8 h-8 group-hover:text-white/100 transition-all group-hover:scale-125" />
-                  </div>
-                  
-                  <span className="text-white font-bold text-sm leading-tight relative z-10 group-hover:underline decoration-white decoration-2 underline-offset-4 transition-all">{goal.title}</span>
-                </motion.div>
-              </Link>
-            );
-          })}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="flex justify-center mt-12"
+          >
+            <Button asChild size="lg" className="px-12 h-14 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-black text-lg rounded-full shadow-xl hover:shadow-2xl transition-all hover:scale-105">
+              <Link href="/pledge">View More Goals <ArrowRight className="w-5 h-5 ml-2" /></Link>
+            </Button>
+          </motion.div>
         </div>
       </section>
     </div>

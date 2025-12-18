@@ -96,8 +96,8 @@ export default function Pledge() {
   const SDGs = goals || [];
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "auto" });
-  }, []);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location]);
 
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
