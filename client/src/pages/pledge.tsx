@@ -164,12 +164,12 @@ export default function Pledge() {
       setIsDownloading(true);
       try {
         const canvas = document.createElement('canvas');
-        canvas.width = 1080;
-        canvas.height = 1440;
+        canvas.width = 1440;
+        canvas.height = 1920;
         const ctx = canvas.getContext('2d');
         if (!ctx) throw new Error('Could not get canvas context');
 
-        // Load template image
+        // Load the RED poster template
         const templateImg = new Image();
         templateImg.crossOrigin = "anonymous";
         templateImg.src = '/certificate-template.jpg';
@@ -180,14 +180,16 @@ export default function Pledge() {
           setTimeout(reject, 5000);
         });
 
-        // Draw template
+        // Draw template at full size
         ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
-        // Cover the original black & white photo with white circle
-        const circleX = 335;
-        const circleY = 440;
-        const circleRadius = 155;
+        // Position for circular photo (adjusted for RED poster layout)
+        // The circle is center-left on the poster
+        const circleX = 480;
+        const circleY = 620;
+        const circleRadius = 220;
 
+        // Cover the original black & white photo with white circle
         ctx.fillStyle = '#FFFFFF';
         ctx.beginPath();
         ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2);
@@ -214,27 +216,31 @@ export default function Pledge() {
           ctx.restore();
         }
 
-        // Draw circular border (yellow/gold)
+        // Draw golden border around circle
         ctx.strokeStyle = '#FFD700';
-        ctx.lineWidth = 6;
+        ctx.lineWidth = 10;
         ctx.beginPath();
         ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2);
         ctx.stroke();
 
-        // Draw user's name where "HAFIZ KHAN" is positioned (right side in yellow box)
+        // Draw user's name where "HAFIZ KHAN" is positioned (right side)
         const name = form.getValues("fullName") || "YOUR NAME";
-        
-        // Yellow background box for name
-        ctx.fillStyle = '#FFD700';
-        ctx.font = 'bold 56px Arial, sans-serif';
-        const nameWidth = ctx.measureText(name).width + 40;
-        ctx.fillRect(700, 350, nameWidth + 40, 120);
-        
-        // White text
         ctx.fillStyle = '#FFFFFF';
-        ctx.font = 'bold 56px Arial, sans-serif';
-        ctx.textAlign = 'left';
-        ctx.fillText(name, 730, 410);
+        ctx.font = 'bold 90px Arial Black, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetX = 3;
+        ctx.shadowOffsetY = 3;
+        
+        // Split name if too long
+        const nameParts = name.split(' ');
+        if (nameParts.length > 1) {
+          ctx.fillText(nameParts[0], 1000, 550);
+          ctx.fillText(nameParts.slice(1).join(' '), 1000, 680);
+        } else {
+          ctx.fillText(name, 1000, 615);
+        }
 
         // Convert to blob and download
         canvas.toBlob((blob) => {
