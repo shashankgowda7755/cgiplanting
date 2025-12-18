@@ -8,6 +8,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { toPng } from "html-to-image";
 import {
   Form,
   FormControl,
@@ -189,103 +190,28 @@ export default function Pledge() {
   }
 
   const downloadCertificate = async () => {
-    if (isDownloading) return;
+    if (isDownloading || !certificateRef.current) return;
     
     setIsDownloading(true);
     try {
-      const canvas = document.createElement('canvas');
-      canvas.width = 1200;
-      canvas.height = 1600;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('Could not get canvas context');
-
-      // Load and draw template
-      const templateImg = new Image();
-      templateImg.crossOrigin = "anonymous";
-      templateImg.src = '/certificate-template.jpg';
-      
-      await new Promise((resolve, reject) => {
-        templateImg.onload = resolve;
-        templateImg.onerror = reject;
-        setTimeout(() => reject(new Error('Template load timeout')), 5000);
+      // Capture the certificate preview div as PNG using html-to-image
+      const dataUrl = await toPng(certificateRef.current, {
+        cacheBust: true,
+        pixelRatio: 2, // Higher quality
       });
-
-      ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
-
-      // Draw user's photo in center circle
-      // Circle center: approximately 47% from left, 45% from top
-      const circleX = canvas.width * 0.47;
-      const circleY = canvas.height * 0.45;
-      const circleRadius = 190;
-
-      if (photoUrl) {
-        const photoImg = new Image();
-        photoImg.crossOrigin = "anonymous";
-        photoImg.src = photoUrl;
-        
-        await new Promise((resolve, reject) => {
-          photoImg.onload = resolve;
-          photoImg.onerror = reject;
-          setTimeout(() => reject(new Error('Photo load timeout')), 5000);
-        });
-
-        // Clip to circle and draw photo
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2);
-        ctx.clip();
-        ctx.drawImage(photoImg, circleX - circleRadius, circleY - circleRadius, circleRadius * 2, circleRadius * 2);
-        ctx.restore();
-
-        // Draw circle border
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = 8;
-        ctx.beginPath();
-        ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-
-      // Draw user's name on right side where "Mr." text is
-      const name = form.getValues("fullName") || "PLEDGER";
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = 'bold 56px Arial, sans-serif';
-      ctx.textAlign = 'left';
-      ctx.shadowColor = 'rgba(0,0,0,0.3)';
-      ctx.shadowBlur = 6;
-      ctx.shadowOffsetX = 2;
-      ctx.shadowOffsetY = 2;
       
-      // Position: right side, roughly where "Mr." text is (~70% from left, 30% from top)
-      const nameX = canvas.width * 0.65;
-      const nameY = canvas.height * 0.35;
+      // Download the image
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = `pledge-certificate-${form.getValues("fullName")}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       
-      // Split long names
-      const nameParts = name.split(' ');
-      if (nameParts.length > 1) {
-        ctx.fillText(nameParts[0], nameX, nameY);
-        ctx.fillText(nameParts.slice(1).join(' '), nameX, nameY + 70);
-      } else {
-        ctx.fillText(name, nameX, nameY);
-      }
-
-      // Convert to blob and download
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = `pledge-certificate-${form.getValues("fullName")}.png`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(url);
-          
-          toast({
-            title: "Success!",
-            description: "Certificate downloaded successfully!",
-          });
-        }
-      }, 'image/png');
+      toast({
+        title: "Success!",
+        description: "Certificate downloaded successfully!",
+      });
     } catch (err) {
       console.error("Download error:", err);
       toast({
