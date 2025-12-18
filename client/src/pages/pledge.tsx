@@ -95,15 +95,24 @@ export default function Pledge() {
   const { data: goals, isLoading } = useGoals();
   const SDGs = goals || [];
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [location]);
-
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const certificateRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to top on navigation or step change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [step]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location]);
 
   // Auto-advance if goal is present in URL
   if (initialGoalId && step === 1 && !isLoading) {
