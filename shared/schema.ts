@@ -2,24 +2,35 @@ import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+export const categories = pgTable("categories", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  description: text("description").notNull(),
+  icon: text("icon").notNull(),
+  color: text("color").notNull(),
+  order: integer("order").default(0),
+});
+
 export const goals = pgTable("goals", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   description: text("description").notNull(),
-  image: text("image").notNull(), // URL to image
-  color: text("color").notNull(), // Tailwind classes or hex
-  goalId: integer("goal_id").notNull().unique(), // The 1-17 number
+  image: text("image").notNull(),
+  color: text("color").notNull(),
+  goalId: integer("goal_id").notNull().unique(),
   featured: boolean("featured").default(false),
-  impactMetric: text("impact_metric"), // e.g., "meals provided", "trees planted"
-  impactValue: text("impact_value"), // e.g., "10", "1000"
-  impactDescription: text("impact_description"), // e.g., "Each pledge helps provide 10 meals to families in need"
+  impactMetric: text("impact_metric"),
+  impactValue: text("impact_value"),
+  impactDescription: text("impact_description"),
+  categoryId: integer("category_id"),
 });
 
 export const pledges = pgTable("pledges", {
   id: serial("id").primaryKey(),
   fullName: text("full_name").notNull(),
   email: text("email").notNull(),
-  goalId: integer("goal_id").notNull(), // References goals.goalId
+  goalId: integer("goal_id").notNull(),
   story: text("story"),
   city: text("city").notNull(),
   country: text("country").notNull(),
@@ -27,7 +38,11 @@ export const pledges = pgTable("pledges", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertGoalSchema = createInsertSchema(goals);
+export const insertCategorySchema = createInsertSchema(categories).omit({ id: true });
+export type InsertCategory = z.infer<typeof insertCategorySchema>;
+export type Category = typeof categories.$inferSelect;
+
+export const insertGoalSchema = createInsertSchema(goals).omit({ id: true });
 export type InsertGoal = z.infer<typeof insertGoalSchema>;
 export type Goal = typeof goals.$inferSelect;
 
