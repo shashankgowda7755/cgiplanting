@@ -208,6 +208,33 @@ export default function Home() {
           </Button>
         </motion.div>
 
+        <div className="bg-gradient-to-r from-emerald-50 via-green-50 to-teal-50 rounded-3xl p-12 mb-12 border border-emerald-200/50">
+          <h3 className="text-3xl font-black text-slate-900 mb-8 font-serif">Global Pledge Statistics</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { goal: "Climate Action", count: "245,127", color: "from-green-500 to-emerald-600" },
+              { goal: "Gender Equality", count: "189,543", color: "from-pink-500 to-rose-600" },
+              { goal: "Quality Education", count: "156,892", color: "from-red-500 to-orange-600" },
+              { goal: "Good Health & Well-being", count: "143,256", color: "from-green-600 to-teal-600" },
+              { goal: "Clean Water & Sanitation", count: "112,847", color: "from-blue-500 to-cyan-600" },
+              { goal: "Decent Work & Economic Growth", count: "98,734", color: "from-purple-500 to-indigo-600" },
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className={`bg-gradient-to-br ${stat.color} text-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all`}
+              >
+                <h4 className="text-lg font-bold mb-2">{stat.goal}</h4>
+                <p className="text-4xl font-black font-serif">{stat.count}</p>
+                <p className="text-white/70 text-sm mt-2">pledges made</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {SDGs.slice(0, 12).map((goal, i) => {
             const Icon = GoalIcons[goal.goalId] || Globe;
