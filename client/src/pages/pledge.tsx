@@ -341,22 +341,40 @@ export default function Pledge() {
             <p>You are now officially part of the movement. Share your commitment with the world.</p>
           </div>
 
-          <div ref={certificateRef} className="mb-8 w-full max-w-3xl relative shadow-2xl rounded-xl overflow-hidden">
-            <img src="/certificate-template.jpg" alt="Certificate" className="w-full block" />
+          <div ref={certificateRef} className="mb-8 w-full max-w-3xl relative shadow-2xl rounded-xl overflow-hidden" style={{ background: '#FFFFFF' }}>
+            <img src="/certificate-template.jpg" alt="Certificate" className="w-full block relative z-0" />
             
-            {/* Overlay user photo in circular frame */}
-            {photoUrl && (
-              <div className="absolute" style={{ left: '33%', top: '32%', transform: 'translate(-50%, -50%)' }}>
-                <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-yellow-400 shadow-lg">
+            {/* White circle to cover old photo */}
+            <div className="absolute z-10" style={{ 
+              left: '32%', 
+              top: '33%', 
+              transform: 'translate(-50%, -50%)',
+              width: '280px',
+              height: '280px',
+              borderRadius: '50%',
+              backgroundColor: '#FFFFFF',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+            }} />
+            
+            {/* User photo overlay */}
+            {photoUrl ? (
+              <div className="absolute z-20" style={{ left: '32%', top: '33%', transform: 'translate(-50%, -50%)' }}>
+                <div className="relative w-56 h-56 rounded-full overflow-hidden border-4 border-yellow-400 shadow-xl">
                   <img src={photoUrl} alt="Your photo" className="w-full h-full object-cover" />
+                </div>
+              </div>
+            ) : (
+              <div className="absolute z-20" style={{ left: '32%', top: '33%', transform: 'translate(-50%, -50%)' }}>
+                <div className="relative w-56 h-56 rounded-full overflow-hidden border-4 border-gray-300 shadow-lg bg-gray-100 flex items-center justify-center">
+                  <span className="text-gray-400 text-sm">Upload Photo</span>
                 </div>
               </div>
             )}
             
-            {/* Overlay user name */}
-            <div className="absolute" style={{ right: '15%', top: '32%', transform: 'translateY(-50%)' }}>
-              <div className="text-white text-4xl font-bold text-center" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
-                {form.getValues("fullName") || "YOUR NAME"}
+            {/* User name overlay */}
+            <div className="absolute z-20" style={{ right: '12%', top: '33%', transform: 'translateY(-50%)' }}>
+              <div className="text-white text-5xl font-bold text-center leading-tight" style={{ textShadow: '3px 3px 6px rgba(0,0,0,0.5)', maxWidth: '300px' }}>
+                {form.getValues("fullName") ? form.getValues("fullName").toUpperCase() : "YOUR NAME"}
               </div>
             </div>
           </div>
