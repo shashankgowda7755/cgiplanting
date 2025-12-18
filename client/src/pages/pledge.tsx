@@ -173,9 +173,9 @@ export default function Pledge() {
       ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
       // Draw user's photo in center circle
-      // Circle center: approximately 47% from left, 50% from top
+      // Circle center: approximately 47% from left, 45% from top
       const circleX = canvas.width * 0.47;
-      const circleY = canvas.height * 0.50;
+      const circleY = canvas.height * 0.45;
       const circleRadius = 190;
 
       if (photoUrl) {
@@ -332,7 +332,7 @@ export default function Pledge() {
                 <div style={{ 
                   position: 'absolute',
                   left: '47%', 
-                  top: '50%', 
+                  top: '45%', 
                   transform: 'translate(-50%, -50%)',
                   width: '380px', 
                   height: '380px',
