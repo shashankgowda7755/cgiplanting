@@ -96,8 +96,14 @@ export default function Pledge() {
 
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false); // Add state to prevent multi-click
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const certificateRef = useRef<HTMLDivElement>(null);
+
+  // Auto-advance if goal is present in URL
+  if (initialGoalId && step === 1) {
+    setStep(2);
+  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -154,7 +160,8 @@ export default function Pledge() {
   }
 
   const downloadCertificate = async () => {
-    if (certificateRef.current) {
+    if (certificateRef.current && !isDownloading) {
+      setIsDownloading(true);
       try {
         // Small delay to ensure rendering
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -177,6 +184,8 @@ export default function Pledge() {
            description: "Could not generate certificate image. Please try again.",
            variant: "destructive"
         });
+      } finally {
+        setIsDownloading(false);
       }
     }
   };
@@ -266,8 +275,8 @@ export default function Pledge() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
             <div className="space-y-4">
                <h3 className="font-bold text-lg">1. Save Your Certificate</h3>
-               <Button onClick={downloadCertificate} size="lg" className="w-full">
-                 Download High-Res PNG
+               <Button onClick={downloadCertificate} size="lg" className="w-full" disabled={isDownloading}>
+                 {isDownloading ? "Generating Image..." : "Download High-Res PNG"}
                </Button>
             </div>
 
@@ -438,7 +447,7 @@ export default function Pledge() {
                                 <SelectValue placeholder="Select a country" />
                               </SelectTrigger>
                             </FormControl>
-                            <SelectContent className="max-h-[200px]">
+                            <SelectContent className="max-h-[200px] bg-white border shadow-md">
                               <SelectItem value="USA">United States</SelectItem>
                               <SelectItem value="UK">United Kingdom</SelectItem>
                               <SelectItem value="CA">Canada</SelectItem>
