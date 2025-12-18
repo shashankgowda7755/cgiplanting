@@ -183,11 +183,11 @@ export default function Pledge() {
         // Draw template at full size
         ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
 
-        // Position for circular photo (adjusted for RED poster layout)
-        // The circle is center-left on the poster
-        const circleX = 480;
-        const circleY = 620;
-        const circleRadius = 220;
+        // Position for circular photo (centered horizontally, upper-middle vertically)
+        // Canvas is 1600x1408, so 50% = 800, 40% = 563
+        const circleX = 800;
+        const circleY = 563;
+        const circleRadius = 110; // 220px / 2
 
         // Cover the original black & white photo with white circle
         ctx.fillStyle = '#FFFFFF';
@@ -223,25 +223,20 @@ export default function Pledge() {
         ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2);
         ctx.stroke();
 
-        // Draw user's name where "HAFIZ KHAN" is positioned (right side)
-        const name = form.getValues("fullName") || "YOUR NAME";
+        // Draw user's name (right side, right-aligned)
+        const name = form.getValues("fullName") || "Mr. Name";
         ctx.fillStyle = '#FFFFFF';
-        ctx.font = 'bold 90px Arial Black, sans-serif';
-        ctx.textAlign = 'center';
+        ctx.font = '600 48px Arial, sans-serif';
+        ctx.textAlign = 'right';
         ctx.shadowColor = 'rgba(0,0,0,0.5)';
-        ctx.shadowBlur = 8;
-        ctx.shadowOffsetX = 3;
-        ctx.shadowOffsetY = 3;
+        ctx.shadowBlur = 4;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
         
-        // Split name if too long - positioned on the right side
-        const nameX = 1240;
-        const nameParts = name.split(' ');
-        if (nameParts.length > 1) {
-          ctx.fillText(nameParts[0], nameX, 580);
-          ctx.fillText(nameParts.slice(1).join(' '), nameX, 710);
-        } else {
-          ctx.fillText(name, nameX, 645);
-        }
+        // Position: right 8%, top 33% = (1472, 465)
+        const nameX = 1472;
+        const nameY = 465;
+        ctx.fillText(name, nameX, nameY);
 
         // Convert to blob and download
         canvas.toBlob((blob) => {
@@ -347,11 +342,11 @@ export default function Pledge() {
             
             {/* White circle to cover old photo */}
             <div className="absolute z-10" style={{ 
-              left: '32%', 
-              top: '33%', 
+              left: '50%', 
+              top: '40%', 
               transform: 'translate(-50%, -50%)',
-              width: '280px',
-              height: '280px',
+              width: '220px',
+              height: '220px',
               borderRadius: '50%',
               backgroundColor: '#FFFFFF',
               boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
@@ -359,29 +354,28 @@ export default function Pledge() {
             
             {/* User photo overlay */}
             {photoUrl ? (
-              <div className="absolute z-20" style={{ left: '32%', top: '33%', transform: 'translate(-50%, -50%)' }}>
-                <div className="relative w-56 h-56 rounded-full overflow-hidden border-4 border-yellow-400 shadow-xl">
+              <div className="absolute z-20" style={{ left: '50%', top: '40%', transform: 'translate(-50%, -50%)' }}>
+                <div className="relative w-55 h-55 rounded-full overflow-hidden border-4 border-yellow-400 shadow-xl" style={{ width: '220px', height: '220px' }}>
                   <img src={photoUrl} alt="Your photo" className="w-full h-full object-cover" />
                 </div>
               </div>
             ) : (
-              <div className="absolute z-20" style={{ left: '32%', top: '33%', transform: 'translate(-50%, -50%)' }}>
-                <div className="relative w-56 h-56 rounded-full overflow-hidden border-4 border-gray-300 shadow-lg bg-gray-100 flex items-center justify-center">
+              <div className="absolute z-20" style={{ left: '50%', top: '40%', transform: 'translate(-50%, -50%)' }}>
+                <div className="relative rounded-full overflow-hidden border-4 border-gray-300 shadow-lg bg-gray-100 flex items-center justify-center" style={{ width: '220px', height: '220px' }}>
                   <span className="text-gray-400 text-sm">Upload Photo</span>
                 </div>
               </div>
             )}
             
             {/* User name overlay */}
-            <div className="absolute z-20" style={{ right: '8%', top: '35%', transform: 'translateY(-50%)' }}>
-              <div className="text-white font-bold leading-tight" style={{ 
-                fontSize: '3.5rem',
-                textShadow: '3px 3px 6px rgba(0,0,0,0.5)', 
-                maxWidth: '280px',
-                lineHeight: '1.1',
-                letterSpacing: '0.05em'
+            <div className="absolute z-20" style={{ right: '8%', top: '33%', textAlign: 'right' }}>
+              <div className="text-white font-semibold" style={{ 
+                fontSize: '22px',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.5)', 
+                maxWidth: '200px',
+                lineHeight: '1.3'
               }}>
-                {form.getValues("fullName") ? form.getValues("fullName").toUpperCase() : "YOUR NAME"}
+                {form.getValues("fullName") ? form.getValues("fullName") : "Mr. Name"}
               </div>
             </div>
           </div>
