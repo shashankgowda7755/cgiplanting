@@ -31,16 +31,18 @@ export async function registerRoutes(
   // Seed goals on startup
   try {
     await storage.seedGoals(SDGs);
-    console.log("Goals seeded successfully");
+    console.log("✓ Goals seeded successfully");
   } catch (error) {
-    console.error("Error seeding goals:", error);
+    console.error("✗ Error seeding goals:", error);
   }
 
   app.get("/api/goals", async (_req, res) => {
     try {
       const goals = await storage.getGoals();
+      console.log(`✓ Fetched ${goals.length} goals`);
       res.json(goals);
     } catch (error) {
+      console.error("✗ Error fetching goals:", error);
       res.status(500).json({ message: "Failed to fetch goals" });
     }
   });
@@ -54,19 +56,25 @@ export async function registerRoutes(
       }
       res.json(goal);
     } catch (error) {
+      console.error("✗ Error fetching goal:", error);
       res.status(500).json({ message: "Failed to fetch goal" });
     }
   });
 
   app.post("/api/pledges", async (req, res) => {
     try {
+      console.log("📝 Pledge submission received:", JSON.stringify(req.body).substring(0, 200));
       const pledgeData = insertPledgeSchema.parse(req.body);
+      console.log("✓ Pledge data validated");
       const pledge = await storage.createPledge(pledgeData);
+      console.log("✓ Pledge created with ID:", pledge.id);
       res.status(201).json(pledge);
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error("✗ Validation error:", error.errors);
         return res.status(400).json({ message: "Invalid pledge data", errors: error.errors });
       }
+      console.error("✗ Error creating pledge:", error);
       res.status(500).json({ message: "Failed to create pledge" });
     }
   });
@@ -80,6 +88,7 @@ export async function registerRoutes(
       }
       res.json(pledge);
     } catch (error) {
+      console.error("✗ Error fetching pledge:", error);
       res.status(500).json({ message: "Failed to fetch pledge" });
     }
   });

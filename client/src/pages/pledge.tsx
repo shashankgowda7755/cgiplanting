@@ -155,13 +155,21 @@ export default function Pledge() {
 
     setIsSubmitting(true);
     try {
-      await apiRequest("POST", "/api/pledges", {
-        ...values,
+      const pledgeData = {
+        fullName: values.fullName,
+        email: values.email,
         goalId: parseInt(values.goalId),
-      });
+        story: values.story || "",
+        city: values.city,
+        country: values.country,
+        photoUrl: values.photoUrl || null,
+      };
+      
+      console.log("Submitting pledge:", pledgeData);
+      await apiRequest("POST", "/api/pledges", pledgeData);
       setStep(4);
     } catch (error) {
-      console.error(error);
+      console.error("Pledge submission error:", error);
       toast({
         title: "Error",
         description: "Failed to submit pledge. Please try again.",
@@ -471,35 +479,41 @@ export default function Pledge() {
                     render={({ field }) => (
                       <FormItem className="space-y-0">
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                          {SDGs.map((goal) => {
-                            const Icon = GoalIcons[goal.goalId] || Globe;
-                            return (
-                              <div
-                                key={goal.goalId}
-                                onClick={() => {
-                                  field.onChange(goal.goalId.toString());
-                                  setStep(2);
-                                }}
-                                className={`cursor-pointer aspect-square rounded-xl p-4 flex flex-col justify-between transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-                                  field.value === goal.goalId.toString() 
-                                    ? "ring-4 ring-offset-2 ring-primary scale-105 shadow-xl" 
-                                    : "shadow-sm opacity-90 hover:opacity-100"
-                                }`}
-                                style={{ backgroundColor: goal.color }}
-                              >
-                                <div className="flex justify-between items-start">
-                                  <span className="text-white/90 font-bold text-2xl font-serif">{goal.goalId}</span>
-                                  <Icon className="text-white/40 w-8 h-8" />
-                                </div>
-                                <span className="text-white font-bold text-sm leading-tight">{goal.title}</span>
-                                {field.value === goal.goalId.toString() && (
-                                  <div className="absolute top-2 right-2 bg-white rounded-full p-1 text-primary shadow-sm">
-                                    <Check className="w-4 h-4" />
+                          {isLoading ? (
+                            <div className="col-span-full text-center py-8 text-slate-500">Loading goals...</div>
+                          ) : SDGs.length === 0 ? (
+                            <div className="col-span-full text-center py-8 text-slate-500">No goals available</div>
+                          ) : (
+                            SDGs.map((goal) => {
+                              const Icon = GoalIcons[goal.goalId] || Globe;
+                              return (
+                                <div
+                                  key={goal.goalId}
+                                  onClick={() => {
+                                    field.onChange(goal.goalId.toString());
+                                    setStep(2);
+                                  }}
+                                  className={`cursor-pointer aspect-square rounded-xl p-4 flex flex-col justify-between transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+                                    field.value === goal.goalId.toString() 
+                                      ? "ring-4 ring-offset-2 ring-primary scale-105 shadow-xl" 
+                                      : "shadow-sm opacity-90 hover:opacity-100"
+                                  }`}
+                                  style={{ backgroundColor: goal.color }}
+                                >
+                                  <div className="flex justify-between items-start">
+                                    <span className="text-white/90 font-bold text-2xl font-serif">{goal.goalId}</span>
+                                    <Icon className="text-white/40 w-8 h-8" />
                                   </div>
-                                )}
-                              </div>
-                            );
-                          })}
+                                  <span className="text-white font-bold text-sm leading-tight">{goal.title}</span>
+                                  {field.value === goal.goalId.toString() && (
+                                    <div className="absolute top-2 right-2 bg-white rounded-full p-1 text-primary shadow-sm">
+                                      <Check className="w-4 h-4" />
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })
+                          )}
                         </div>
                         <FormMessage />
                       </FormItem>
