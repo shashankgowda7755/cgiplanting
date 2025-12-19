@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { ArrowRight, Globe, Users, Award, Wallet, Utensils, Heart, GraduationCap, Droplets, Zap, Briefcase, Factory, Equal, Building2, Recycle, ThermometerSun, Fish, TreePine, Shield, Handshake, CheckCircle } from "lucide-react";
 import handsImage from '@assets/generated_images/hands_together_community_unity.png';
 import forestImage from '@assets/generated_images/lush_green_forest_canopy.png';
@@ -51,9 +51,28 @@ const featuredPledges = [
 export default function Home() {
   const { data: goals, isLoading } = useGoals();
   const SDGs = goals || [];
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const interval = setInterval(() => {
+      const scrollWidth = container.scrollWidth - container.clientWidth;
+      const currentScroll = container.scrollLeft;
+      
+      if (currentScroll >= scrollWidth - 10) {
+        container.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        container.scrollBy({ left: 400, behavior: "smooth" });
+      }
+    }, 2000);
+
+    return () => clearInterval(interval);
   }, []);
 
   if (isLoading) {
@@ -222,7 +241,7 @@ export default function Home() {
               <p className="text-lg text-slate-600">See what happens when one person takes action</p>
             </motion.div>
             
-            <div className="overflow-x-auto scrollbar-hide">
+            <div ref={scrollContainerRef} className="overflow-x-auto scrollbar-hide scroll-smooth">
               <div className="flex gap-4 pb-4 min-w-min px-6">
                 {SDGs.map((goal, i) => {
                   const Icon = GoalIcons[goal.goalId] || Globe;

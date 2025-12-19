@@ -1,6 +1,7 @@
 import { useGoals } from "@/lib/goals";
-import { motion } from "framer-motion";
-import { Globe, Wallet, Utensils, Heart, GraduationCap, Users, Droplets, Zap, Briefcase, Factory, Equal, Building2, Recycle, ThermometerSun, Fish, TreePine, Shield, Handshake } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { Globe, Wallet, Utensils, Heart, GraduationCap, Users, Droplets, Zap, Briefcase, Factory, Equal, Building2, Recycle, ThermometerSun, Fish, TreePine, Shield, Handshake, X } from "lucide-react";
 
 const GoalIcons: Record<number, React.ElementType> = {
   1: Wallet, 2: Utensils, 3: Heart, 4: GraduationCap, 5: Users, 6: Droplets,
@@ -16,6 +17,7 @@ const GoalIcons: Record<number, React.ElementType> = {
 export default function Impact() {
   const { data: goals, isLoading } = useGoals();
   const SDGs = goals || [];
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
   if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -33,7 +35,7 @@ export default function Impact() {
           <p className="text-xl text-slate-600 max-w-3xl leading-relaxed">See the measurable impact of every single pledge made toward the Sustainable Development Goals worldwide</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {SDGs.map((goal, i) => {
             const Icon = GoalIcons[goal.goalId] || Globe;
             if (!goal.impactMetric) return null;
@@ -44,33 +46,31 @@ export default function Impact() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
-                whileHover={{ y: -8 }}
-                className="rounded-2xl overflow-hidden backdrop-blur-xl border border-white/50 shadow-lg hover:shadow-2xl transition-all flex flex-col"
+                whileHover={{ y: -4 }}
+                onClick={() => setExpandedId(goal.id)}
+                className="rounded-lg overflow-hidden backdrop-blur-xl border border-white/50 shadow-md hover:shadow-lg transition-all flex flex-col cursor-pointer"
                 style={{ backgroundColor: goal.color + "15" }}
               >
                 {goal.image && (
-                  <div className="h-48 overflow-hidden">
+                  <div className="h-32 overflow-hidden">
                     <img src={goal.image} alt={goal.title} className="w-full h-full object-cover" />
                   </div>
                 )}
-                <div className="p-8 flex-1 flex flex-col">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="rounded-xl p-3 flex-shrink-0" style={{ backgroundColor: goal.color }}>
-                      <Icon className="w-6 h-6 text-white" />
+                <div className="p-4 flex-1 flex flex-col">
+                  <div className="flex items-start gap-2 mb-2">
+                    <div className="rounded-lg p-2 flex-shrink-0" style={{ backgroundColor: goal.color }}>
+                      <Icon className="w-5 h-5 text-white" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-black text-slate-900 text-2xl font-serif">{goal.title}</h3>
+                      <h3 className="font-bold text-slate-900 text-lg font-serif">{goal.title}</h3>
                     </div>
                   </div>
-                  {goal.description && (
-                    <p className="text-slate-700 leading-relaxed text-sm mb-6">{goal.description}</p>
-                  )}
-                  <div className="border-t border-white/30 pt-6 mt-auto">
-                    <div className="flex items-center gap-2 mb-3">
-                      <p className="text-2xl font-black" style={{ color: goal.color }}>{goal.impactValue}</p>
-                      <p className="text-base font-semibold text-slate-600">{goal.impactMetric}</p>
+                  <div className="border-t border-white/30 pt-3 mt-auto">
+                    <div className="flex items-center gap-2 mb-2">
+                      <p className="text-xl font-black" style={{ color: goal.color }}>{goal.impactValue}</p>
+                      <p className="text-sm font-semibold text-slate-600">{goal.impactMetric}</p>
                     </div>
-                    <p className="text-slate-700 leading-relaxed text-sm">{goal.impactDescription}</p>
+                    <p className="text-slate-700 leading-relaxed text-xs">{goal.impactDescription}</p>
                   </div>
                 </div>
               </motion.div>
@@ -78,6 +78,68 @@ export default function Impact() {
           })}
         </div>
       </section>
+
+      <AnimatePresence>
+        {expandedId && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setExpandedId(null)}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+            />
+            <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              >
+                {SDGs.map((goal) => {
+                  if (goal.id !== expandedId) return null;
+                  const Icon = GoalIcons[goal.goalId] || Globe;
+                  return (
+                    <div key={goal.id}>
+                      {goal.image && (
+                        <div className="h-64 overflow-hidden">
+                          <img src={goal.image} alt={goal.title} className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <div className="p-8">
+                        <div className="flex items-start gap-4 mb-6">
+                          <div className="rounded-xl p-3 flex-shrink-0" style={{ backgroundColor: goal.color }}>
+                            <Icon className="w-6 h-6 text-white" />
+                          </div>
+                          <div className="flex-1">
+                            <h2 className="font-black text-slate-900 text-3xl font-serif">{goal.title}</h2>
+                          </div>
+                          <button
+                            onClick={() => setExpandedId(null)}
+                            className="flex-shrink-0 p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                          >
+                            <X className="w-5 h-5" />
+                          </button>
+                        </div>
+                        {goal.description && (
+                          <p className="text-slate-700 leading-relaxed text-base mb-6">{goal.description}</p>
+                        )}
+                        <div className="bg-slate-50 rounded-lg p-6 mb-6">
+                          <div className="flex items-baseline gap-2 mb-3">
+                            <p className="text-3xl font-black" style={{ color: goal.color }}>{goal.impactValue}</p>
+                            <p className="text-lg font-semibold text-slate-600">{goal.impactMetric}</p>
+                          </div>
+                          <p className="text-slate-700 leading-relaxed">{goal.impactDescription}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </motion.div>
+            </div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
