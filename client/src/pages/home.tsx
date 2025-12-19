@@ -210,7 +210,7 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Impact Metrics by Goal */}
+          {/* Impact Metrics by Goal - Horizontal Scroll */}
           <div className="mt-20 pt-12 border-t border-slate-200">
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -222,33 +222,35 @@ export default function Home() {
               <p className="text-lg text-slate-600">See what happens when one person takes action</p>
             </motion.div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {SDGs.map((goal, i) => {
-                const Icon = GoalIcons[goal.goalId] || Globe;
-                if (!goal.impactMetric) return null;
-                return (
-                  <motion.div
-                    key={goal.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.05 }}
-                    className="rounded-xl p-6 backdrop-blur-xl border border-white/50 shadow-lg hover:shadow-xl transition-all"
-                    style={{ backgroundColor: goal.color + "15" }}
-                  >
-                    <div className="flex items-start gap-4 mb-4">
-                      <div className="rounded-lg p-3 flex-shrink-0" style={{ backgroundColor: goal.color }}>
-                        <Icon className="w-6 h-6 text-white" />
+            <div className="overflow-x-auto scrollbar-hide">
+              <div className="flex gap-6 pb-4 min-w-min px-6">
+                {SDGs.map((goal, i) => {
+                  const Icon = GoalIcons[goal.goalId] || Globe;
+                  if (!goal.impactMetric) return null;
+                  return (
+                    <motion.div
+                      key={goal.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.05 }}
+                      className="flex-shrink-0 w-full sm:w-1/2 md:w-1/2 lg:w-1/2 rounded-xl p-6 backdrop-blur-xl border border-white/50 shadow-lg hover:shadow-xl transition-all"
+                      style={{ backgroundColor: goal.color + "15" }}
+                    >
+                      <div className="flex items-start gap-4 mb-4">
+                        <div className="rounded-lg p-3 flex-shrink-0" style={{ backgroundColor: goal.color }}>
+                          <Icon className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-black text-slate-900 text-lg">{goal.title}</h4>
+                          <p className="text-sm text-slate-600 mt-1">{goal.impactValue} {goal.impactMetric}</p>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <h4 className="font-black text-slate-900 text-lg">{goal.title}</h4>
-                        <p className="text-sm text-slate-600 mt-1">{goal.impactValue} {goal.impactMetric}</p>
-                      </div>
-                    </div>
-                    <p className="text-sm text-slate-700 leading-relaxed">{goal.impactDescription}</p>
-                  </motion.div>
-                );
-              })}
+                      <p className="text-sm text-slate-700 leading-relaxed">{goal.impactDescription}</p>
+                    </motion.div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
