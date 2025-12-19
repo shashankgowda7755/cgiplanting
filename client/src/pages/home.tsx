@@ -234,19 +234,19 @@ export default function Home() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.05 }}
-                      className="flex-shrink-0 w-80 sm:w-96 rounded-lg p-4 backdrop-blur-xl border border-white/50 shadow-md hover:shadow-lg transition-all"
+                      className="flex-shrink-0 w-80 sm:w-96 rounded-lg p-5 backdrop-blur-xl border border-white/50 shadow-md hover:shadow-lg transition-all flex flex-col h-full"
                       style={{ backgroundColor: goal.color + "15" }}
                     >
-                      <div className="flex items-start gap-3 mb-3">
+                      <div className="flex items-start gap-3 mb-4">
                         <div className="rounded-md p-2 flex-shrink-0" style={{ backgroundColor: goal.color }}>
                           <Icon className="w-5 h-5 text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-bold text-slate-900 text-base leading-tight">{goal.title}</h4>
-                          <p className="text-xs text-slate-600 mt-0.5 font-semibold">{goal.impactValue} {goal.impactMetric}</p>
+                          <p className="text-xs text-slate-600 mt-1 font-semibold" style={{ color: goal.color }}>{goal.impactValue} {goal.impactMetric}</p>
                         </div>
                       </div>
-                      <p className="text-xs text-slate-700 leading-relaxed line-clamp-2">{goal.impactDescription}</p>
+                      <p className="text-sm text-slate-700 leading-relaxed flex-1">{goal.impactDescription}</p>
                     </motion.div>
                   );
                 })}

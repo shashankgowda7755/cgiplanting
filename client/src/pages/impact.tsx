@@ -53,11 +53,14 @@ export default function Impact() {
                     <Icon className="w-8 h-8 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-black text-slate-900 text-2xl font-serif mb-2">{goal.title}</h3>
-                    <p className="text-lg font-bold" style={{ color: goal.color }}>{goal.impactValue} {goal.impactMetric}</p>
+                    <h3 className="font-black text-slate-900 text-2xl font-serif mb-3">{goal.title}</h3>
+                    <div className="flex items-center gap-2">
+                      <p className="text-2xl font-black" style={{ color: goal.color }}>{goal.impactValue}</p>
+                      <p className="text-base font-semibold text-slate-600">{goal.impactMetric}</p>
+                    </div>
                   </div>
                 </div>
-                <p className="text-slate-700 leading-relaxed text-base">{goal.impactDescription}</p>
+                <p className="text-slate-700 leading-relaxed text-base border-t border-white/30 pt-6">{goal.impactDescription}</p>
               </motion.div>
             );
           })}
