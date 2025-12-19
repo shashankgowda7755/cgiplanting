@@ -234,19 +234,31 @@ export default function Home() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.05 }}
-                      className="flex-shrink-0 w-80 sm:w-96 rounded-lg p-5 backdrop-blur-xl border border-white/50 shadow-md hover:shadow-lg transition-all flex flex-col h-full"
+                      className="flex-shrink-0 w-80 sm:w-96 rounded-lg overflow-hidden backdrop-blur-xl border border-white/50 shadow-md hover:shadow-lg transition-all flex flex-col h-full"
                       style={{ backgroundColor: goal.color + "15" }}
                     >
-                      <div className="flex items-start gap-3 mb-4">
-                        <div className="rounded-md p-2 flex-shrink-0" style={{ backgroundColor: goal.color }}>
-                          <Icon className="w-5 h-5 text-white" />
+                      {goal.image && (
+                        <div className="h-32 overflow-hidden">
+                          <img src={goal.image} alt={goal.title} className="w-full h-full object-cover" />
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-slate-900 text-base leading-tight">{goal.title}</h4>
-                          <p className="text-xs text-slate-600 mt-1 font-semibold" style={{ color: goal.color }}>{goal.impactValue} {goal.impactMetric}</p>
+                      )}
+                      <div className="p-4 flex-1 flex flex-col">
+                        <div className="flex items-start gap-2 mb-3">
+                          <div className="rounded-md p-1.5 flex-shrink-0" style={{ backgroundColor: goal.color }}>
+                            <Icon className="w-4 h-4 text-white" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-bold text-slate-900 text-sm leading-tight">{goal.title}</h4>
+                          </div>
+                        </div>
+                        {goal.description && (
+                          <p className="text-xs text-slate-700 mb-3 line-clamp-2">{goal.description}</p>
+                        )}
+                        <div className="border-t border-white/30 pt-3 mt-auto">
+                          <p className="text-xs text-slate-600 font-semibold mb-1" style={{ color: goal.color }}>{goal.impactValue} {goal.impactMetric}</p>
+                          <p className="text-xs text-slate-700 leading-relaxed">{goal.impactDescription}</p>
                         </div>
                       </div>
-                      <p className="text-sm text-slate-700 leading-relaxed flex-1">{goal.impactDescription}</p>
                     </motion.div>
                   );
                 })}
