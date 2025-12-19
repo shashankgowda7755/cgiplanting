@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Layout from "@/components/layout";
 import Home from "@/pages/home";
+import Impact from "@/pages/impact";
 import Pledge from "@/pages/pledge";
 import NotFound from "@/pages/not-found";
 
@@ -20,6 +21,7 @@ function Router() {
     <Layout>
       <Switch>
         <Route path="/" component={Home} />
+        <Route path="/impact" component={Impact} />
         <Route path="/pledge" component={Pledge} />
         <Route component={NotFound} />
       </Switch>

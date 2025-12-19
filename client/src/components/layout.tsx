@@ -40,10 +40,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               Home
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-emerald-500 to-green-600 group-hover:w-full transition-all duration-300"></span>
             </Link>
-            <a href="#impact" className="text-slate-700 hover:text-emerald-600 transition-colors duration-200 relative group">
+            <Link href="/impact" className="text-slate-700 hover:text-emerald-600 transition-colors duration-200 relative group">
               Impact
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-emerald-500 to-green-600 group-hover:w-full transition-all duration-300"></span>
-            </a>
+            </Link>
             <Link href="/pledge" className="px-6 py-2.5 rounded-full bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-105 font-bold tracking-wider transition-all duration-300">
               Take the Pledge
             </Link>
