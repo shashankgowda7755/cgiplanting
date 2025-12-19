@@ -9,6 +9,7 @@ export interface IStorage {
   getGoals(): Promise<Goal[]>;
   getGoalsByCategory(categoryId: number): Promise<Goal[]>;
   getGoal(id: number): Promise<Goal | undefined>;
+  updateGoalImpact(goalId: number, impactMetric: string, impactValue: string, impactDescription: string): Promise<Goal | undefined>;
   createPledge(pledge: InsertPledge): Promise<Pledge>;
   getPledge(id: number): Promise<Pledge | undefined>;
   seedCategories(initialCategories: InsertCategory[]): Promise<void>;
@@ -40,6 +41,15 @@ export class DatabaseStorage implements IStorage {
 
   async getGoal(id: number): Promise<Goal | undefined> {
     const [goal] = await db.select().from(goals).where(eq(goals.goalId, id));
+    return goal;
+  }
+
+  async updateGoalImpact(goalId: number, impactMetric: string, impactValue: string, impactDescription: string): Promise<Goal | undefined> {
+    const [goal] = await db
+      .update(goals)
+      .set({ impactMetric, impactValue, impactDescription })
+      .where(eq(goals.goalId, goalId))
+      .returning();
     return goal;
   }
 

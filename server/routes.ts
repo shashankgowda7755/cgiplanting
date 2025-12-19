@@ -144,6 +144,33 @@ export async function registerRoutes(
     }
   });
 
+  app.put("/api/goals/:id/impact", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { impactMetric, impactValue, impactDescription } = req.body;
+      
+      const impactSchema = z.object({
+        impactMetric: z.string().min(1, "Impact metric is required"),
+        impactValue: z.string().min(1, "Impact value is required"),
+        impactDescription: z.string().min(1, "Impact description is required"),
+      });
+      
+      impactSchema.parse({ impactMetric, impactValue, impactDescription });
+      
+      const goal = await storage.updateGoalImpact(id, impactMetric, impactValue, impactDescription);
+      if (!goal) {
+        return res.status(404).json({ message: "Goal not found" });
+      }
+      res.json(goal);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid impact data", errors: error.errors });
+      }
+      console.error("✗ Error updating goal impact:", error);
+      res.status(500).json({ message: "Failed to update goal impact" });
+    }
+  });
+
   // Pledge routes
   app.post("/api/pledges", async (req, res) => {
     try {
