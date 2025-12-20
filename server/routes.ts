@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertPledgeSchema } from "@shared/schema";
+import { insertPledgeSchema } from "../shared/schema";
 import { z } from "zod";
 
 const CATEGORIES = [
@@ -148,15 +148,15 @@ export async function registerRoutes(
     try {
       const id = parseInt(req.params.id);
       const { impactMetric, impactValue, impactDescription } = req.body;
-      
+
       const impactSchema = z.object({
         impactMetric: z.string().min(1, "Impact metric is required"),
         impactValue: z.string().min(1, "Impact value is required"),
         impactDescription: z.string().min(1, "Impact description is required"),
       });
-      
+
       impactSchema.parse({ impactMetric, impactValue, impactDescription });
-      
+
       const goal = await storage.updateGoalImpact(id, impactMetric, impactValue, impactDescription);
       if (!goal) {
         return res.status(404).json({ message: "Goal not found" });

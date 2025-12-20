@@ -3,7 +3,6 @@ import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useGoals, useCategories, Goal, Category } from "@/lib/goals";
 import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,40 +24,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Check, 
-  ChevronRight, 
-  ChevronLeft, 
+import {
+  ChevronRight,
+  ChevronLeft,
   Upload,
   Download,
   Share2,
   Twitter,
   Linkedin,
-  Wallet,
-  Utensils,
-  Heart,
-  GraduationCap,
-  Users,
-  Droplets,
-  Zap,
-  Briefcase,
-  Factory,
-  Equal,
-  Building2,
-  Recycle,
-  ThermometerSun,
-  Fish,
   TreePine,
-  Shield,
-  Handshake,
-  Globe,
-  User,
-  Leaf
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
-  fullName: z.string().min(2, "Name must be at least 2 characters"),
+  firstName: z.string().min(2, "First name must be at least 2 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   goalId: z.string().min(1, "Please select a goal"),
   story: z.string().optional(),
@@ -67,74 +47,33 @@ const formSchema = z.object({
   photoUrl: z.string().optional(),
 });
 
-const GoalIcons: Record<number, React.ElementType> = {
-  1: Wallet, 2: Utensils, 3: Heart, 4: GraduationCap, 5: Users, 6: Droplets,
-  7: Zap, 8: Briefcase, 9: Factory, 10: Equal, 11: Building2, 12: Recycle,
-  13: ThermometerSun, 14: Fish, 15: TreePine, 16: Shield, 17: Handshake,
-  101: Recycle, 102: Recycle, 103: Zap, 104: Droplets, 105: User, 106: Utensils,
-  201: TreePine, 202: Zap, 203: Building2, 204: Factory, 205: ThermometerSun,
-  301: Heart, 302: Heart, 303: User, 304: Heart, 305: Heart,
-  401: TreePine, 402: Leaf, 403: Fish, 404: Leaf, 405: Droplets,
-  501: Users, 502: Building2, 503: GraduationCap, 504: Utensils, 505: Users
-};
-
-const CategoryIcons: Record<string, React.ElementType> = {
-  "Globe": Globe, "User": User, "Building2": Building2, "Heart": Heart, "TreePine": TreePine, "Users": Users
-};
-
 export default function Pledge() {
   const [location, setLocation] = useLocation();
-  const searchParams = new URLSearchParams(window.location.search);
-  const initialGoalId = searchParams.get("goal") || "";
-  const initialCategoryId = searchParams.get("category") || "";
   const { toast } = useToast();
-  const { data: goals, isLoading: goalsLoading } = useGoals();
-  const { data: categories, isLoading: categoriesLoading } = useCategories();
-  const allGoals = goals || [];
-  const allCategories = categories || [];
 
   const [step, setStep] = useState(1);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    initialCategoryId ? parseInt(initialCategoryId) : null
-  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const certificateRef = useRef<HTMLDivElement>(null);
 
-  const filteredGoals = selectedCategoryId 
-    ? allGoals.filter(g => g.categoryId === selectedCategoryId)
-    : allGoals;
-
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [step]);
 
-  useEffect(() => {
-    if (initialGoalId && step === 1 && !goalsLoading) {
-      const goal = allGoals.find(g => g.goalId.toString() === initialGoalId);
-      if (goal?.categoryId) {
-        setSelectedCategoryId(goal.categoryId);
-        setStep(2);
-      }
-    }
-  }, [initialGoalId, goalsLoading, allGoals]);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      fullName: "",
+      firstName: "",
+      lastName: "",
       email: "",
-      goalId: initialGoalId,
+      goalId: "999", // CGI Plantation
       story: "",
       city: "",
       country: "",
       photoUrl: undefined,
     },
   });
-
-  const selectedGoalId = form.watch("goalId");
-  const selectedGoal = allGoals.find((g) => g.goalId.toString() === selectedGoalId);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -162,7 +101,7 @@ export default function Pledge() {
     setIsSubmitting(true);
     try {
       const pledgeData = {
-        fullName: values.fullName,
+        fullName: `${values.firstName} ${values.lastName}`,
         email: values.email,
         goalId: parseInt(values.goalId),
         story: values.story || "",
@@ -186,7 +125,7 @@ export default function Pledge() {
       const dataUrl = await toPng(certificateRef.current, { cacheBust: true, pixelRatio: 2 });
       const link = document.createElement('a');
       link.href = dataUrl;
-      link.download = `pledge-certificate-${form.getValues("fullName")}.png`;
+      link.download = `pledge-certificate-${form.getValues("firstName")}-${form.getValues("lastName")}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -211,31 +150,48 @@ export default function Pledge() {
     if (shareUrl) window.open(shareUrl, '_blank');
   };
 
-  const stepLabels = ["Category", "Goal", "Details", "Preview", "Certificate"];
+  const stepLabels = ["Details", "Preview", "Certificate"];
+
+  // Auto-select CGI Plantation (we'll use a hardcoded goalId for now)
+  useEffect(() => {
+    if (step === 1) {
+      // Skip category and goal selection, go directly to details
+      form.setValue("goalId", "999"); // Placeholder for CGI Plantation
+      setStep(3); // Start at details step
+    }
+  }, []);
 
   return (
     <div className="container mx-auto px-6 py-12 max-w-4xl">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-12 bg-gradient-to-r from-white/40 to-emerald-50/40 backdrop-blur-xl rounded-2xl p-8 border border-white/30 shadow-lg"
       >
-        <h1 className="text-5xl font-black font-serif text-slate-900 mb-6">Take the Pledge</h1>
+        <div className="flex items-center gap-4 mb-6">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-700 to-emerald-700 flex items-center justify-center">
+            <TreePine className="w-8 h-8 text-white" />
+          </div>
+          <div>
+            <h1 className="text-4xl font-black font-serif text-slate-900">CGI Plantation Initiative</h1>
+            <p className="text-slate-600">Complete your details to receive your certificate</p>
+          </div>
+        </div>
         <div className="flex items-center gap-2 text-sm font-bold flex-wrap">
-          {stepLabels.slice(0, Math.max(step, 4)).map((label, i) => (
+          {stepLabels.slice(0, Math.max(step - 2, 1)).map((label, i) => (
             <div key={i} className="flex items-center gap-2">
-              <span className={`px-3 py-1.5 rounded-full transition-all ${step >= i + 1 ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg" : "bg-slate-100 text-slate-600"}`}>
+              <span className={`px-3 py-1.5 rounded-full transition-all ${step >= i + 3 ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg" : "bg-slate-100 text-slate-600"}`}>
                 {i + 1}. {label}
               </span>
-              {i < Math.max(step, 4) - 1 && <ChevronRight className="w-4 h-4 text-slate-400" />}
+              {i < Math.max(step - 2, 1) - 1 && <ChevronRight className="w-4 h-4 text-slate-400" />}
             </div>
           ))}
         </div>
         <div className="h-2 bg-slate-200 mt-6 rounded-full overflow-hidden">
-          <motion.div 
+          <motion.div
             className="h-full bg-gradient-to-r from-emerald-500 to-green-600 rounded-full shadow-lg shadow-emerald-500/50"
             initial={{ width: "0%" }}
-            animate={{ width: `${Math.min((step / 5) * 100, 100)}%` }}
+            animate={{ width: `${Math.min(((step - 2) / 3) * 100, 100)}%` }}
           />
         </div>
       </motion.div>
@@ -243,20 +199,24 @@ export default function Pledge() {
       {step === 5 ? (
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center">
           <div className="bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 px-8 py-6 rounded-2xl mb-8 text-center w-full border border-emerald-200 shadow-lg">
-            <h2 className="text-3xl font-black mb-3 font-serif">Pledge Verified!</h2>
-            <p className="text-lg">Your certificate is ready to download and share with the world.</p>
+            <h2 className="text-3xl font-black mb-3 font-serif">Plantation Certificate Ready!</h2>
+            <p className="text-lg">Your official CGI Plantation certificate is ready to download and share.</p>
           </div>
 
           <div ref={certificateRef} className="relative w-full max-w-2xl aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl mb-8" style={{ backgroundColor: '#1a365d' }}>
             <img src="/certificate-template.jpg" alt="Certificate" className="w-full h-full object-cover" style={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }} />
             {photoUrl && (
-              <div style={{ position: 'absolute', top: '35%', left: '38%', transform: 'translate(-50%, -50%)', width: '30%', aspectRatio: '1', borderRadius: '50%', overflow: 'hidden', border: '6px solid white', zIndex: 10 }}>
+              <div style={{ position: 'absolute', top: '45.1%', left: '44.2%', transform: 'translate(-50%, -50%)', width: '62%', aspectRatio: '1', borderRadius: '50%', overflow: 'hidden', border: '4px solid white', zIndex: 10 }}>
                 <img src={photoUrl} alt="Your photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
             )}
-            <div style={{ position: 'absolute', left: '66%', top: '30%', color: 'white', fontWeight: 'bold', fontSize: '56px', textShadow: '4px 4px 8px rgba(0,0,0,0.6)', lineHeight: '1.05', zIndex: 15 }}>
-              {form.getValues("fullName")?.split(' ').map((word, i) => <div key={i} style={{ marginTop: i > 0 ? '8px' : 0 }}>{word}</div>)}
+            <div style={{ position: 'absolute', left: '65%', top: '23.5%', color: 'white', fontWeight: '900', fontSize: '30px', textShadow: '2px 2px 4px rgba(0,0,0,0.5)', zIndex: 15, width: '35%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', lineHeight: '1' }}>
+              {form.getValues("firstName")}
             </div>
+            <div style={{ position: 'absolute', left: '73%', top: '28.5%', color: 'white', fontWeight: '900', fontSize: '30px', textShadow: '2px 2px 4px rgba(0,0,0,0.5)', zIndex: 15, width: '28%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', lineHeight: '1' }}>
+              {form.getValues("lastName")}
+            </div>
+
           </div>
 
           <div className="w-full max-w-2xl space-y-6">
@@ -279,84 +239,7 @@ export default function Pledge() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <AnimatePresence mode="wait">
-              {step === 1 && (
-                <motion.div key="step1" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
-                  <h2 className="text-2xl font-black mb-6 text-slate-900">Choose a Category</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {categoriesLoading ? (
-                      <div className="col-span-full text-center py-8 text-slate-500">Loading categories...</div>
-                    ) : (
-                      allCategories.map((category) => {
-                        const Icon = CategoryIcons[category.icon] || Globe;
-                        return (
-                          <div
-                            key={category.id}
-                            onClick={() => { setSelectedCategoryId(category.id); setStep(2); }}
-                            className={`cursor-pointer rounded-xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 ${selectedCategoryId === category.id ? "border-emerald-500 shadow-xl" : "border-transparent"}`}
-                            style={{ backgroundColor: category.color + "15" }}
-                            data-testid={`category-card-${category.id}`}
-                          >
-                            <div className="rounded-lg p-3 w-fit mb-4" style={{ backgroundColor: category.color }}>
-                              <Icon className="w-6 h-6 text-white" />
-                            </div>
-                            <h3 className="font-black text-lg text-slate-900 mb-2">{category.name}</h3>
-                            <p className="text-sm text-slate-600">{category.description}</p>
-                          </div>
-                        );
-                      })
-                    )}
-                  </div>
-                </motion.div>
-              )}
-
-              {step === 2 && (
-                <motion.div key="step2" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-black text-slate-900">Choose a Goal</h2>
-                    <Button variant="ghost" size="sm" onClick={() => setStep(1)} className="text-emerald-600">Change Category</Button>
-                  </div>
-                  <FormField
-                    control={form.control}
-                    name="goalId"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                          {goalsLoading ? (
-                            <div className="col-span-full text-center py-8 text-slate-500">Loading goals...</div>
-                          ) : filteredGoals.length === 0 ? (
-                            <div className="col-span-full text-center py-8 text-slate-500">No goals in this category yet</div>
-                          ) : (
-                            filteredGoals.map((goal) => {
-                              const Icon = GoalIcons[goal.goalId] || Globe;
-                              return (
-                                <div
-                                  key={goal.goalId}
-                                  onClick={() => { field.onChange(goal.goalId.toString()); setStep(3); }}
-                                  className={`cursor-pointer aspect-square rounded-xl p-4 flex flex-col justify-between transition-all duration-300 hover:scale-105 hover:shadow-xl relative ${field.value === goal.goalId.toString() ? "ring-4 ring-offset-2 ring-primary scale-105 shadow-xl" : "shadow-sm"}`}
-                                  style={{ backgroundColor: goal.color }}
-                                  data-testid={`goal-card-${goal.goalId}`}
-                                >
-                                  <div className="flex justify-between items-start">
-                                    <span className="text-white/90 font-bold text-xl font-serif">{goal.goalId > 100 ? "" : goal.goalId}</span>
-                                    <Icon className="text-white/40 w-8 h-8" />
-                                  </div>
-                                  <span className="text-white font-bold text-sm leading-tight">{goal.title}</span>
-                                  {field.value === goal.goalId.toString() && (
-                                    <div className="absolute top-2 right-2 bg-white rounded-full p-1 text-primary shadow-sm">
-                                      <Check className="w-4 h-4" />
-                                    </div>
-                                  )}
-                                </div>
-                              );
-                            })
-                          )}
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </motion.div>
-              )}
+              {/* Skip step 1 and 2 - Categories and Goals are hidden */}
 
               {step === 3 && (
                 <motion.div key="step3" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-6 max-w-lg mx-auto">
@@ -375,14 +258,23 @@ export default function Pledge() {
                     <p className="text-xs text-muted-foreground mt-2">Required for certificate</p>
                   </div>
 
-                  <FormField control={form.control} name="fullName" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Full Name (for Certificate)</FormLabel>
-                      <FormControl><Input placeholder="Jane Doe" {...field} data-testid="input-fullName" /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField control={form.control} name="firstName" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First Name (for Certificate)</FormLabel>
+                        <FormControl><Input placeholder="Jane" {...field} data-testid="input-firstName" /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control} name="lastName" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last Name (for Certificate)</FormLabel>
+                        <FormControl><Input placeholder="Doe" {...field} data-testid="input-lastName" /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                  </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <FormField control={form.control} name="email" render={({ field }) => (
                       <FormItem>
@@ -400,7 +292,7 @@ export default function Pledge() {
                     )} />
                   </div>
 
-                  <div className="relative z-50"> 
+                  <div className="relative z-50">
                     <FormField control={form.control} name="country" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Country</FormLabel>
@@ -449,11 +341,9 @@ export default function Pledge() {
                       </div>
                       <div className="flex-1">
                         <p className="text-sm text-muted-foreground">Your Name</p>
-                        <p className="text-2xl font-bold">{form.getValues("fullName") || "Not provided"}</p>
-                        <p className="text-sm text-muted-foreground mt-2">Goal: {selectedGoal?.title}</p>
-                        {selectedGoal?.impactValue && selectedGoal?.impactMetric && (
-                          <p className="text-sm text-emerald-600 mt-1 font-semibold">Impact: {selectedGoal.impactValue} {selectedGoal.impactMetric}</p>
-                        )}
+                        <p className="text-2xl font-bold">{form.getValues("firstName")} {form.getValues("lastName") || "Not provided"}</p>
+                        <p className="text-sm text-muted-foreground mt-2">Goal: CGI Plantation</p>
+                        <p className="text-sm text-emerald-600 mt-1 font-semibold">Plant trees and make a lasting environmental impact</p>
                       </div>
                     </div>
                   </div>
@@ -470,7 +360,7 @@ export default function Pledge() {
               ) : (
                 <div></div>
               )}
-              
+
               {step > 1 && (
                 <Button type="submit" disabled={isSubmitting} data-testid="button-next" className="bg-blue-600 hover:bg-blue-700 text-white">
                   {isSubmitting ? "Generating..." : step === 4 ? "Confirm Pledge" : <>Next <ChevronRight className="w-4 h-4 ml-2" /></>}
