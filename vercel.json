@@ -2,25 +2,10 @@
     "version": 2,
     "buildCommand": "npm run build",
     "installCommand": "npm install",
-    "outputDirectory": "dist/public",
-    "builds": [
+    "rewrites": [
         {
-            "src": "dist/serverless.cjs",
-            "use": "@vercel/node"
-        }
-    ],
-    "routes": [
-        {
-            "src": "/assets/(.*)",
-            "dest": "/assets/$1"
-        },
-        {
-            "src": "/(.*\\.(js|css|jpg|jpeg|png|svg|ico|webp|gif|woff|woff2|ttf|eot|map|json))",
-            "dest": "/$1"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/dist/serverless.cjs"
+            "source": "/(.*)",
+            "destination": "/api"
         }
     ]
 }
