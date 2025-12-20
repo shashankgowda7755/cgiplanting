@@ -37976,7 +37976,8 @@ var insertPledgeSchema = createInsertSchema(pledges).pick({
   goalId: true,
   story: true,
   city: true,
-  country: true
+  country: true,
+  photoUrl: true
 });
 
 // server/db.ts
@@ -38266,7 +38267,7 @@ var MemStorage = class {
       id: this.currentPledgeId++,
       createdAt: /* @__PURE__ */ new Date(),
       story: insertPledge.story || null,
-      photoUrl: null
+      photoUrl: insertPledge.photoUrl || null
     };
     this.pledges.push(pledge);
     return pledge;
