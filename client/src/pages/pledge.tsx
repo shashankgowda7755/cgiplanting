@@ -76,15 +76,19 @@ export default function Pledge() {
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast({ title: "File too large", description: "Please upload an image smaller than 5MB", variant: "destructive" });
+      if (file.size > 10 * 1024 * 1024) { // Increased limit to 10MB to be safe
+        toast({ title: "File too large", description: "Please upload an image smaller than 10MB", variant: "destructive" });
         return;
       }
+
+      // OPTIMIZATION: Use createObjectURL for instant preview
+      const objectUrl = URL.createObjectURL(file);
+      setPhotoUrl(objectUrl);
+
+      // Process base64 in background for form data (non-blocking for UI)
       const reader = new FileReader();
       reader.onloadend = () => {
-        const base64 = reader.result as string;
-        setPhotoUrl(base64);
-        form.setValue("photoUrl", base64);
+        form.setValue("photoUrl", reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -113,10 +117,8 @@ export default function Pledge() {
         photoUrl: photoUrl || undefined,
       };
 
-      // Try to save to backend
       try {
         await apiRequest("POST", "/api/pledges", pledgeData);
-        // If successful, data is stored in server memory
       } catch (apiError) {
         console.warn("Backend submission failed, proceeding in offline mode:", apiError);
         toast({
@@ -126,7 +128,6 @@ export default function Pledge() {
         });
       }
 
-      // ALWAYS proceed to certificate generation
       setStep(5);
     } catch (error) {
       console.error("General error:", error);
@@ -140,7 +141,8 @@ export default function Pledge() {
     if (isDownloading || !certificateRef.current) return;
     setIsDownloading(true);
     try {
-      const dataUrl = await toPng(certificateRef.current, { cacheBust: true, pixelRatio: 2 });
+      // OPTIMIZATION: Faster download settings
+      const dataUrl = await toPng(certificateRef.current, { cacheBust: false, pixelRatio: 1.5 });
       const link = document.createElement('a');
       link.href = dataUrl;
       link.download = `pledge-certificate-${form.getValues("firstName")}-${form.getValues("lastName")}.png`;
@@ -156,13 +158,14 @@ export default function Pledge() {
     }
   };
 
-  const shareOnSocial = async (platform: string) => {
+  const shareOnSocial = async () => {
     const text = `I just planted a tree to make a positive impact. Join the movement!`;
 
     // Try Native Share with Image first (Mobile mostly)
     if (certificateRef.current) {
       try {
-        const dataUrl = await toPng(certificateRef.current, { cacheBust: true, pixelRatio: 2 });
+        // OPTIMIZATION: pixelRatio 1.5 and cacheBust false
+        const dataUrl = await toPng(certificateRef.current, { cacheBust: false, pixelRatio: 1.5 });
         const blob = await (await fetch(dataUrl)).blob();
         const file = new File([blob], "certificate.png", { type: "image/png" });
 
@@ -175,27 +178,17 @@ export default function Pledge() {
             });
             return; // Successfully opened share sheet
           } catch (err) {
-            // User cancelled or share failed, handle silently or log
-            if ((err as Error).name !== 'AbortError') console.error("Native share error:", err);
-            return; // Don't fallback if user cancelled
+            // User cancelled or share failed
           }
         }
       } catch (err) {
         console.error("Image generation failed:", err);
-        // Continue to fallback
       }
     }
 
-    // Fallback for Desktop / No File Support
-    const currentUrl = window.location.href;
-    let shareUrl = "";
-    switch (platform) {
-      case 'twitter': shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`; break;
-      case 'facebook': shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`; break;
-      case 'linkedin': shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`; break;
-      case 'whatsapp': shareUrl = `https://wa.me/?text=${encodeURIComponent(text)}`; break;
-    }
-    if (shareUrl) window.open(shareUrl, '_blank');
+    // Fallback for Desktop (Text only)
+    const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+    window.open(shareUrl, '_blank');
   };
 
   const stepLabels = ["Details", "Preview", "Certificate"];
@@ -273,11 +266,10 @@ export default function Pledge() {
 
             <div className="border-t border-slate-200 pt-8">
               <h3 className="font-black text-lg mb-6 text-slate-900">Share Your Achievement</h3>
-              <div className="grid grid-cols-3 gap-4">
-                <Button variant="outline" onClick={() => shareOnSocial('twitter')} size="lg"><Twitter className="w-5 h-5" /></Button>
-                <Button variant="outline" onClick={() => shareOnSocial('linkedin')} size="lg"><Linkedin className="w-5 h-5" /></Button>
-                <Button variant="outline" onClick={() => shareOnSocial('whatsapp')} size="lg"><Share2 className="w-5 h-5" /></Button>
-              </div>
+              <Button onClick={() => shareOnSocial()} size="lg" className="w-full h-14 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold shadow-xl">
+                <Share2 className="w-5 h-5 mr-2" />
+                Share Certificate
+              </Button>
             </div>
             <Button variant="ghost" onClick={() => setLocation("/")} className="w-full h-12 text-emerald-600 font-bold">Return Home</Button>
           </div>
