@@ -163,13 +163,13 @@ export default function Pledge() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-12 bg-gradient-to-r from-white/40 to-emerald-50/40 backdrop-blur-xl rounded-2xl p-8 border border-white/30 shadow-lg"
+        className="mb-8 bg-gradient-to-r from-white/40 to-emerald-50/40 backdrop-blur-xl rounded-2xl p-4 md:p-8 border border-white/30 shadow-lg"
       >
-        <div className="flex items-center gap-3 md:gap-4 mb-6">
-          <img src="/communitree_logo.png" alt="Communitree" className="h-12 md:h-20 w-auto object-contain" />
-          <div>
-            <h1 className="text-2xl md:text-4xl font-black font-serif text-slate-900">CGI Plantation Initiative</h1>
-            <p className="text-sm md:text-base text-slate-600">Complete your details to receive your certificate</p>
+        <div className="flex items-center gap-2 md:gap-4 mb-4 md:mb-6">
+          <img src="/communitree_logo.png" alt="Communitree" className="h-8 md:h-16 w-auto object-contain flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl md:text-4xl font-black font-serif text-slate-900 leading-tight">CGI Plantation Initiative</h1>
+            <p className="text-xs md:text-base text-slate-600 mt-1">Complete your details to receive your certificate</p>
           </div>
         </div>
         <div className="flex items-center gap-2 text-sm font-bold flex-wrap">
