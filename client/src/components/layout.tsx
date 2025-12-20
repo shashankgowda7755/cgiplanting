@@ -27,7 +27,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
           <div className="w-full px-8 flex h-20 items-center justify-between">
             <Link href="/" className="flex items-center space-x-3 group" onClick={handleScroll("hero")}>
-              <img src="/communitree_logo.png" alt="Communitree" className="h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
+              <img src="/communitree_logo.png" alt="Communitree" className="h-8 md:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
             </Link>
 
             {/* Mobile Pledge Button */}
