@@ -156,8 +156,29 @@ export default function Pledge() {
     }
   };
 
+  const handleNativeShare = async () => {
+    if (!certificateRef.current) return;
+    try {
+      const dataUrl = await toPng(certificateRef.current, { cacheBust: true, pixelRatio: 2 });
+      const blob = await (await fetch(dataUrl)).blob();
+      const file = new File([blob], "certificate.png", { type: "image/png" });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: 'My Plantation Certificate',
+          text: 'I just planted a tree to make a positive impact. Join the movement!',
+          files: [file]
+        });
+      } else {
+        toast({ description: "Sharing not supported on this device. Please download first.", variant: "default" });
+      }
+    } catch (error) {
+      console.error("Sharing failed", error);
+    }
+  };
+
   const shareOnSocial = (platform: string) => {
-    const text = `I just planted a tree to make a positive impact! Join the movement.`;
+    const text = `I just planted a tree to make a positive impact. Join the movement!`;
     // const url = "https://global-pledge.replit.app"; // URL removed from message
     let shareUrl = "";
     switch (platform) {
@@ -240,6 +261,13 @@ export default function Pledge() {
               <Download className="w-5 h-5 mr-2" />
               {isDownloading ? "Generating..." : "Download Certificate"}
             </Button>
+
+            {/* Native Share Button - Visible on Mobile */}
+            <Button onClick={handleNativeShare} size="lg" variant="outline" className="w-full h-14 border-2 border-emerald-500 text-emerald-700 font-bold hover:bg-emerald-50 md:hidden">
+              <Share2 className="w-5 h-5 mr-2" />
+              Share on Mobile
+            </Button>
+
             <div className="border-t border-slate-200 pt-8">
               <h3 className="font-black text-lg mb-6 text-slate-900">Share Your Achievement</h3>
               <div className="grid grid-cols-3 gap-4">
