@@ -121,7 +121,7 @@ export default function Home() {
                   <div className="space-y-4">
                     <div className="flex items-start gap-3">
                       <CheckCircle className="w-6 h-6 text-emerald-600 flex-shrink-0 mt-0.5" />
-                      <p className="text-slate-700 leading-relaxed">Plant trees as part of CGI's corporate sustainability initiative</p>
+                      <p className="text-slate-700 leading-relaxed">Plant trees as part of CGI's initiative</p>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="w-6 h-6 text-emerald-600 flex-shrink-0 mt-0.5" />
