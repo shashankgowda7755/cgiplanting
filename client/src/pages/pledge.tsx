@@ -41,7 +41,6 @@ const formSchema = z.object({
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   goalId: z.string().min(1, "Please select a goal"),
-  story: z.string().optional(),
   city: z.string().min(2, "City is required"),
   country: z.string().min(2, "Country is required"),
   photoUrl: z.string().optional(),
@@ -68,7 +67,6 @@ export default function Pledge() {
       lastName: "",
       email: "",
       goalId: "999", // CGI Plantation
-      story: "",
       city: "",
       country: "",
       photoUrl: undefined,
@@ -104,7 +102,6 @@ export default function Pledge() {
         fullName: `${values.firstName} ${values.lastName}`,
         email: values.email,
         goalId: parseInt(values.goalId),
-        story: values.story || "",
         city: values.city,
         country: values.country,
       };
@@ -139,13 +136,13 @@ export default function Pledge() {
   };
 
   const shareOnSocial = (platform: string) => {
-    const text = `I just took the pledge to make a positive impact! Join the movement with Global Pledge Initiative.`;
-    const url = "https://global-pledge.replit.app";
+    const text = `I just planted a tree to make a positive impact! Join the movement.`;
+    // const url = "https://global-pledge.replit.app"; // URL removed from message
     let shareUrl = "";
     switch (platform) {
-      case 'twitter': shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`; break;
-      case 'linkedin': shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`; break;
-      case 'whatsapp': shareUrl = `https://wa.me/?text=${encodeURIComponent(text + " " + url)}`; break;
+      case 'twitter': shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`; break;
+      case 'linkedin': shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent("https://global-pledge.replit.app")}`; break;
+      case 'whatsapp': shareUrl = `https://wa.me/?text=${encodeURIComponent(text)}`; break;
     }
     if (shareUrl) window.open(shareUrl, '_blank');
   };
@@ -169,9 +166,7 @@ export default function Pledge() {
         className="mb-12 bg-gradient-to-r from-white/40 to-emerald-50/40 backdrop-blur-xl rounded-2xl p-8 border border-white/30 shadow-lg"
       >
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-700 to-emerald-700 flex items-center justify-center">
-            <TreePine className="w-8 h-8 text-white" />
-          </div>
+          <img src="/communitree_logo.png" alt="Communitree" className="h-20 w-auto object-contain" />
           <div>
             <h1 className="text-4xl font-black font-serif text-slate-900">CGI Plantation Initiative</h1>
             <p className="text-slate-600">Complete your details to receive your certificate</p>
@@ -210,10 +205,10 @@ export default function Pledge() {
                 <img src={photoUrl} alt="Your photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
             )}
-            <div style={{ position: 'absolute', left: '65%', top: '23.5%', color: 'white', fontWeight: '900', fontSize: '30px', textShadow: '2px 2px 4px rgba(0,0,0,0.5)', zIndex: 15, width: '35%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', lineHeight: '1' }}>
+            <div style={{ position: 'absolute', left: '65%', top: '23.5%', color: 'white', fontWeight: '900', fontSize: '25px', textShadow: '2px 2px 4px rgba(0,0,0,0.5)', zIndex: 15, width: '35%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', lineHeight: '1.2' }}>
               {form.getValues("firstName")}
             </div>
-            <div style={{ position: 'absolute', left: '73%', top: '28.5%', color: 'white', fontWeight: '900', fontSize: '30px', textShadow: '2px 2px 4px rgba(0,0,0,0.5)', zIndex: 15, width: '28%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', lineHeight: '1' }}>
+            <div style={{ position: 'absolute', left: '65%', top: '28.5%', color: 'white', fontWeight: '900', fontSize: '25px', textShadow: '2px 2px 4px rgba(0,0,0,0.5)', zIndex: 15, width: '35%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', lineHeight: '1.2' }}>
               {form.getValues("lastName")}
             </div>
 
@@ -317,13 +312,7 @@ export default function Pledge() {
                     )} />
                   </div>
 
-                  <FormField control={form.control} name="story" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Why is this goal important to you? (Optional)</FormLabel>
-                      <FormControl><Textarea placeholder="I believe that..." className="resize-none h-32" {...field} data-testid="textarea-story" /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
+
                 </motion.div>
               )}
 

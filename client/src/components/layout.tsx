@@ -25,15 +25,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="fixed top-0 left-0 right-0 z-50">
         <header className="w-full border-b border-white/20 bg-white/70 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 shadow-lg shadow-black/5">
 
-          <div className="container flex h-20 items-center justify-between">
+          <div className="w-full px-8 flex h-20 items-center justify-between">
             <Link href="/" className="flex items-center space-x-3 group" onClick={handleScroll("hero")}>
-              <div className="h-11 w-11 rounded-full bg-gradient-to-br from-emerald-500 via-green-600 to-teal-700 flex items-center justify-center text-white shadow-xl shadow-green-500/20 group-hover:scale-110 group-hover:shadow-green-500/40 transition-all duration-300">
-                <Globe className="h-6 w-6" />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-serif font-black text-xl tracking-tight leading-none text-slate-900 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-emerald-600 group-hover:to-green-700 transition-all duration-300">Global Pledge</span>
-                <span className="text-xs font-bold tracking-widest text-emerald-600 uppercase">Initiative</span>
-              </div>
+              <img src="/communitree_logo.png" alt="Communitree" className="h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
             </Link>
 
             {/* Mobile Pledge Button */}
