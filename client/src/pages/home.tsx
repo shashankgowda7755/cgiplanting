@@ -16,18 +16,13 @@ const featuredPledges = [
 ];
 
 export default function Home() {
-  const [pledgeCount, setPledgeCount] = useState(1243567);
+
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
 
-  useEffect(() => {
-    const counterInterval = setInterval(() => {
-      setPledgeCount((prev: number) => prev + Math.floor(Math.random() * 3) + 1);
-    }, 1000);
-    return () => clearInterval(counterInterval);
-  }, []);
+
 
   return (
     <div className="space-y-20 pb-16">
@@ -54,7 +49,7 @@ export default function Home() {
             >
               <CheckCircle className="w-5 h-5 text-amber-300 animate-pulse" />
               <span className="font-bold tracking-wide text-white">
-                {(pledgeCount / 1000000).toFixed(2)}M+ Pledges Made Worldwide
+                Start Your Plantation Today
               </span>
             </motion.div>
 
@@ -64,8 +59,8 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="text-7xl md:text-8xl font-black tracking-tighter leading-tight drop-shadow-2xl font-serif"
             >
-              Make Your<br />
-              <span className="bg-gradient-to-r from-amber-200 via-yellow-200 to-amber-100 bg-clip-text text-transparent">Pledge Today</span>
+              Start Your<br />
+              <span className="bg-gradient-to-r from-amber-200 via-yellow-200 to-amber-100 bg-clip-text text-transparent">Plantation Journey</span>
             </motion.h1>
 
             <motion.p
@@ -74,7 +69,7 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="text-xl md:text-2xl text-white/95 max-w-3xl mx-auto leading-relaxed font-light"
             >
-              Join millions committing to the UN Sustainable Development Goals. Get your certificate, inspire others, and drive real change.
+              Join the movement to create a greener future. Plant trees, receive your certificate, and make a lasting environmental impact.
             </motion.p>
 
             <motion.div
@@ -83,15 +78,15 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.5 }}
             >
               <Button asChild size="lg" className="text-lg px-10 h-16 rounded-full bg-gradient-to-r from-amber-300 to-yellow-300 hover:from-amber-400 hover:to-yellow-400 text-emerald-900 font-black shadow-2xl shadow-yellow-400/40 hover:shadow-yellow-400/60 transition-all hover:scale-110 hover:-translate-y-1">
-                <Link href="/pledge" data-testid="button-take-pledge">Take the Pledge Now</Link>
+                <Link href="/pledge" data-testid="button-take-pledge">Start Your Plantation</Link>
               </Button>
             </motion.div>
           </motion.div>
         </div>
-      </section>
+      </section >
 
       {/* CGI Plantation Feature Section */}
-      <section className="container mx-auto px-6 py-20">
+      < section className="container mx-auto px-6 py-20" >
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -145,9 +140,9 @@ export default function Home() {
             </Link>
           </motion.div>
         </div>
-      </section>
+      </section >
 
 
-    </div>
+    </div >
   );
 }
