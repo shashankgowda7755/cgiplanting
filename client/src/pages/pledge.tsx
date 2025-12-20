@@ -226,10 +226,10 @@ export default function Pledge() {
                 <img src={photoUrl} alt="Your photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
             )}
-            <div style={{ position: 'absolute', left: '65%', top: '23.5%', color: 'white', fontWeight: '900', fontSize: '25px', textShadow: '2px 2px 4px rgba(0,0,0,0.5)', zIndex: 15, width: '35%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', lineHeight: '1.2' }}>
+            <div style={{ position: 'absolute', left: '68%', top: '22%', color: 'white', fontWeight: '900', fontSize: '20px', textShadow: '2px 2px 4px rgba(0,0,0,0.5)', zIndex: 15, width: '30%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', lineHeight: '1.2' }}>
               {form.getValues("firstName")}
             </div>
-            <div style={{ position: 'absolute', left: '65%', top: '28.5%', color: 'white', fontWeight: '900', fontSize: '25px', textShadow: '2px 2px 4px rgba(0,0,0,0.5)', zIndex: 15, width: '35%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', lineHeight: '1.2' }}>
+            <div style={{ position: 'absolute', left: '68%', top: '26.5%', color: 'white', fontWeight: '900', fontSize: '20px', textShadow: '2px 2px 4px rgba(0,0,0,0.5)', zIndex: 15, width: '30%', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', lineHeight: '1.2' }}>
               {form.getValues("lastName")}
             </div>
 
