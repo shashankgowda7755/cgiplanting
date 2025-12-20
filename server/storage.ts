@@ -61,7 +61,7 @@ export class MemStorage implements IStorage {
       id: this.currentPledgeId++,
       createdAt: new Date(),
       story: insertPledge.story || null,
-      photoUrl: null,
+      photoUrl: insertPledge.photoUrl || null,
     };
     this.pledges.push(pledge);
     return pledge;

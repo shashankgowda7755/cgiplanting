@@ -91,6 +91,12 @@ export default function Pledge() {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    // Require photo before moving to preview step
+    if (step === 3 && !photoUrl) {
+      toast({ title: "Photo Required", description: "Please upload a photo for your certificate.", variant: "destructive" });
+      return;
+    }
+
     if (step < 4) {
       setStep(step + 1);
       return;
@@ -104,8 +110,11 @@ export default function Pledge() {
         goalId: parseInt(values.goalId),
         city: values.city,
         country: values.country,
+        photoUrl: photoUrl || undefined, // Include the uploaded photo
       };
-      await apiRequest("POST", "/api/pledges", pledgeData);
+      console.log('Submitting pledge with data:', { ...pledgeData, photoUrl: photoUrl ? `[${photoUrl.length} chars]` : 'none' });
+      const result = await apiRequest("POST", "/api/pledges", pledgeData);
+      console.log('Pledge created successfully:', result);
       setStep(5);
     } catch (error) {
       console.error("Pledge submission error:", error);
