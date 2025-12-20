@@ -161,7 +161,14 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = process.env.DATABASE_URL
+const useDatabase = !!process.env.DATABASE_URL;
+if (useDatabase) {
+  console.log("📦 Storage initialized: Using DatabaseStorage (Neon DB)");
+} else {
+  console.log("📦 Storage initialized: Using MemStorage (In-Memory)");
+}
+
+export const storage = useDatabase
   ? new DatabaseStorage()
   : new MemStorage();
 
