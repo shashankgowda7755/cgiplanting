@@ -110,15 +110,27 @@ export default function Pledge() {
         goalId: parseInt(values.goalId),
         city: values.city,
         country: values.country,
-        photoUrl: photoUrl || undefined, // Include the uploaded photo
+        photoUrl: photoUrl || undefined,
       };
-      console.log('Submitting pledge with data:', { ...pledgeData, photoUrl: photoUrl ? `[${photoUrl.length} chars]` : 'none' });
-      const result = await apiRequest("POST", "/api/pledges", pledgeData);
-      console.log('Pledge created successfully:', result);
+
+      // Try to save to backend
+      try {
+        await apiRequest("POST", "/api/pledges", pledgeData);
+        // If successful, data is stored in server memory
+      } catch (apiError) {
+        console.warn("Backend submission failed, proceeding in offline mode:", apiError);
+        toast({
+          title: "Note",
+          description: "Pledge generated locally. You can still download your certificate!",
+          variant: "default"
+        });
+      }
+
+      // ALWAYS proceed to certificate generation
       setStep(5);
     } catch (error) {
-      console.error("Pledge submission error:", error);
-      toast({ title: "Error", description: "Failed to submit pledge. Please try again.", variant: "destructive" });
+      console.error("General error:", error);
+      toast({ title: "Error", description: "Something went wrong. Please try again.", variant: "destructive" });
     } finally {
       setIsSubmitting(false);
     }
