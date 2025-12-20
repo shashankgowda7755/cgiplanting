@@ -156,34 +156,43 @@ export default function Pledge() {
     }
   };
 
-  const handleNativeShare = async () => {
-    if (!certificateRef.current) return;
-    try {
-      const dataUrl = await toPng(certificateRef.current, { cacheBust: true, pixelRatio: 2 });
-      const blob = await (await fetch(dataUrl)).blob();
-      const file = new File([blob], "certificate.png", { type: "image/png" });
-
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          title: 'My Plantation Certificate',
-          text: 'I just planted a tree to make a positive impact. Join the movement!',
-          files: [file]
-        });
-      } else {
-        toast({ description: "Sharing not supported on this device. Please download first.", variant: "default" });
-      }
-    } catch (error) {
-      console.error("Sharing failed", error);
-    }
-  };
-
-  const shareOnSocial = (platform: string) => {
+  const shareOnSocial = async (platform: string) => {
     const text = `I just planted a tree to make a positive impact. Join the movement!`;
-    // const url = "https://global-pledge.replit.app"; // URL removed from message
+
+    // Try Native Share with Image first (Mobile mostly)
+    if (certificateRef.current) {
+      try {
+        const dataUrl = await toPng(certificateRef.current, { cacheBust: true, pixelRatio: 2 });
+        const blob = await (await fetch(dataUrl)).blob();
+        const file = new File([blob], "certificate.png", { type: "image/png" });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({
+              title: 'My Plantation Certificate',
+              text: text,
+              files: [file]
+            });
+            return; // Successfully opened share sheet
+          } catch (err) {
+            // User cancelled or share failed, handle silently or log
+            if ((err as Error).name !== 'AbortError') console.error("Native share error:", err);
+            return; // Don't fallback if user cancelled
+          }
+        }
+      } catch (err) {
+        console.error("Image generation failed:", err);
+        // Continue to fallback
+      }
+    }
+
+    // Fallback for Desktop / No File Support
+    const currentUrl = window.location.href;
     let shareUrl = "";
     switch (platform) {
       case 'twitter': shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`; break;
-      case 'linkedin': shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent("https://global-pledge.replit.app")}`; break;
+      case 'facebook': shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`; break;
+      case 'linkedin': shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`; break;
       case 'whatsapp': shareUrl = `https://wa.me/?text=${encodeURIComponent(text)}`; break;
     }
     if (shareUrl) window.open(shareUrl, '_blank');
@@ -260,12 +269,6 @@ export default function Pledge() {
             <Button onClick={downloadCertificate} size="lg" className="w-full h-14 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold shadow-xl" disabled={isDownloading}>
               <Download className="w-5 h-5 mr-2" />
               {isDownloading ? "Generating..." : "Download Certificate"}
-            </Button>
-
-            {/* Native Share Button - Visible on Mobile */}
-            <Button onClick={handleNativeShare} size="lg" variant="outline" className="w-full h-14 border-2 border-emerald-500 text-emerald-700 font-bold hover:bg-emerald-50 md:hidden">
-              <Share2 className="w-5 h-5 mr-2" />
-              Share on Mobile
             </Button>
 
             <div className="border-t border-slate-200 pt-8">
