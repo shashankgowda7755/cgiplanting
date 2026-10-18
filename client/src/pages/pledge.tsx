@@ -44,6 +44,8 @@ const formSchema = z.object({
   city: z.string().min(2, "City is required"),
   country: z.string().min(2, "Country is required"),
   photoUrl: z.string().optional(),
+  ageGroup: z.enum(["adult", "minor"], { required_error: "Please confirm your age" }),
+  consent: z.boolean().refine((v) => v === true, "Please confirm to continue"),
 });
 
 export default function Pledge() {
@@ -70,6 +72,8 @@ export default function Pledge() {
       city: "",
       country: "",
       photoUrl: undefined,
+      ageGroup: undefined,
+      consent: false,
     },
   });
 
@@ -330,6 +334,37 @@ export default function Pledge() {
                       </FormItem>
                     )} />
                   </div>
+
+                  <FormField control={form.control} name="ageGroup" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Your age</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger data-testid="select-age"><SelectValue placeholder="Select" /></SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="bg-white border shadow-md">
+                          <SelectItem value="adult">I am 18 or older</SelectItem>
+                          <SelectItem value="minor">I am under 18</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="consent" render={({ field }) => (
+                    <FormItem>
+                      <label className="flex items-start gap-2 text-sm text-slate-700">
+                        <input type="checkbox" className="mt-1" checked={field.value} onChange={(e) => field.onChange(e.target.checked)} data-testid="checkbox-consent" />
+                        <span>
+                          {form.watch("ageGroup") === "minor"
+                            ? "My parent or guardian has read the Privacy Policy and consents to my details and photo being used for this certificate."
+                            : "I have read the Privacy Policy and consent to my details and photo being used for this certificate."}
+                          {" "}<a href="/privacy" target="_blank" rel="noopener" className="text-emerald-700 underline">Privacy &amp; Terms</a>
+                        </span>
+                      </label>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
 
                   <div className="relative z-50">
                     <FormField control={form.control} name="country" render={({ field }) => (

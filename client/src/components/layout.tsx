@@ -54,6 +54,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
+      <footer className="border-t border-slate-200 py-6 text-center text-sm text-slate-600">
+        <Link href="/privacy" className="hover:text-emerald-600 underline">Privacy &amp; Terms</Link>
+        <span className="mx-3">|</span>
+        <Link href="/takedown" className="hover:text-emerald-600 underline">Report content</Link>
+      </footer>
+
 
     </div>
   );
